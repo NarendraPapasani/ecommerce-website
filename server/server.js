@@ -23,6 +23,13 @@ app.use(
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/products", require("./routes/productRoute"));
 app.use("/api/cart", authenticateController, require("./routes/cartRoute"));
+app.use(
+  "/api/address",
+  authenticateController,
+  require("./routes/addressRoute")
+);
+
+app.use("/api/order", authenticateController, require("./routes/orderRoute"));
 
 connectDb();
 

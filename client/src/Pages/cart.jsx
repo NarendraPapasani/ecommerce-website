@@ -65,7 +65,6 @@ const Cart = () => {
           withCredentials: true,
         }
       );
-      console.log(resp);
       getCartItems();
     } catch (error) {
       console.log(error);
@@ -81,7 +80,7 @@ const Cart = () => {
           withCredentials: true,
         }
       );
-      console.log(resp);
+
       getCartItems();
     } catch (error) {
       console.log(error);
@@ -96,7 +95,6 @@ const Cart = () => {
           withCredentials: true,
         }
       );
-      console.log(resp);
       toast("Item deleted", {
         type: "info",
         style: { backgroundColor: "orange", color: "white" },
@@ -109,7 +107,7 @@ const Cart = () => {
   };
 
   const handleShopNow = () => {
-    window.location.href = "/";
+    window.location.href = "/products/all";
   };
 
   return (
@@ -208,6 +206,7 @@ const Cart = () => {
                   <button
                     className="bg-green-500 border text-white py-1 px-4 md:py-2 rounded hover:bg-green-700 w-1/2"
                     style={{ height: "auto" }}
+                    onClick={() => (window.location.href = "/checkout")}
                   >
                     Checkout
                   </button>

@@ -59,9 +59,9 @@ const LoginForm = () => {
         if (response.status === 200) {
           setIsLoaded(false);
           toast.success(response.data.msg);
-          Cookies.set("jwt", response.data.token, { expires: 0.0028 });
+          Cookies.set("jwt", response.data.token, { expires: 1 });
           toast.success("Login successful");
-          navigate("/");
+          window.location.href = "/";
         } else {
           setIsLoaded(false);
           toast.error(response.data.msg);

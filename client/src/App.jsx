@@ -49,6 +49,9 @@ import ProtectedRoute from "./ProtectedRoute";
 import ProductDetailsPage from "./Pages/ProductDetailsPage";
 import ProductListPage from "./Pages/ProductListPage";
 import cart from "./Pages/cart";
+import Address from "./Pages/Address";
+import CheckOut from "./Pages/CheckOut";
+import Orders from "./Pages/Orders";
 
 const AppContent = () => {
   const location = useLocation();
@@ -61,6 +64,8 @@ const AppContent = () => {
   const clickAllProd = () => {
     window.location.href = "/products/all";
   };
+
+  const jwt = Cookies.get("jwt");
 
   // Inside your AppContent component
   const navigate = useNavigate();
@@ -80,30 +85,37 @@ const AppContent = () => {
   const clickCart = () => {
     window.location.href = "/cart";
   };
+
+  const clickAddress = () => {
+    window.location.href = "/addresses";
+  };
   return (
     <div className="app-container bg-zinc-950">
       <div className="content">
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<ProtectedRoute element={<Home />} />} />
+          <Route path="/" element={<Home />} />
           <Route path="/cart" element={<ProtectedRoute element={<Cart />} />} />
           <Route
             path="/my-profile"
             element={<ProtectedRoute element={<MyProfile />} />}
           />
-          <Route
-            path="/products/all"
-            element={<ProtectedRoute element={<Products />} />}
-          />
-          <Route
-            path="/product/:id"
-            element={<ProtectedRoute element={<ProductDetailsPage />} />}
-          />
-          <Route
-            path="/products"
-            element={<ProtectedRoute element={<ProductListPage />} />}
-          />
+          <Route path="/products/all" element={<Products />} />
+          <Route path="/product/:id" element={<ProductDetailsPage />} />
+          <Route path="/products" element={<ProductListPage />} />
           <Route path="/cart" element={<ProtectedRoute element={<Cart />} />} />
+          <Route
+            path="/addresses"
+            element={<ProtectedRoute element={<Address />} />}
+          />
+          <Route
+            path="/checkout"
+            element={<ProtectedRoute element={<CheckOut />} />}
+          />
+          <Route
+            path="/orders"
+            element={<ProtectedRoute element={<Orders />} />}
+          />
         </Routes>
       </div>
       {location.pathname !== "/login" && (
@@ -111,11 +123,11 @@ const AppContent = () => {
           <div className="flex justify-center items-center">
             <Menubar className="h-16 lg:h-16 sm:h-20">
               <MenubarMenu className="mr-2 sm:mr-4">
-                <MenubarTrigger className="text-lg font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
+                <MenubarTrigger className="text-lg text-black font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
                   <Link to="/">Home</Link>
                 </MenubarTrigger>
                 <MenubarMenu>
-                  <MenubarTrigger className="text-lg font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
+                  <MenubarTrigger className="text-lg text-black font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
                     Cart
                   </MenubarTrigger>
                   <MenubarContent className="mb-4">
@@ -141,7 +153,7 @@ const AppContent = () => {
                 </MenubarMenu>
               </MenubarMenu>
               <MenubarMenu>
-                <MenubarTrigger className="text-lg font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
+                <MenubarTrigger className="text-lg text-black font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
                   Products
                 </MenubarTrigger>
                 <MenubarContent className="mb-4 ml-4">
@@ -185,7 +197,7 @@ const AppContent = () => {
               </MenubarMenu>
 
               <MenubarMenu>
-                <MenubarTrigger className="text-lg font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
+                <MenubarTrigger className="text-lg font-normal text-black hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
                   Account
                 </MenubarTrigger>
                 <MenubarContent className="mb-4">
@@ -201,32 +213,44 @@ const AppContent = () => {
                   <MenubarItem
                     inset
                     className="text-lg sm:text-xl md:text-2xl lg:text-xl"
+                    onClick={clickAddress}
                   >
                     My Address
                   </MenubarItem>
                   <MenubarSeparator />
                   <AlertDialog>
                     <AlertDialogTrigger className="w-full text-lg sm:text-xl md:text-2xl lg:text-xl">
-                      <Button className="w-full text-lg sm:text-xl md:text-2xl lg:text-xl">
-                        Logout
-                      </Button>
+                      {!jwt ? (
+                        <Button
+                          className="w-full text-lg sm:text-xl md:text-2xl lg:text-xl"
+                          onClick={() => (window.location.href = "/login")}
+                        >
+                          Login
+                        </Button>
+                      ) : (
+                        <Button className="w-full text-lg sm:text-xl md:text-2xl lg:text-xl">
+                          Logout
+                        </Button>
+                      )}
                     </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you want to Logout?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          You can always login back
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={logOutFunc}>
-                          Continue
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
+                    {jwt !== undefined && (
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you want to Logout?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            You can always login back
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={logOutFunc}>
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    )}
                   </AlertDialog>
                 </MenubarContent>
               </MenubarMenu>
