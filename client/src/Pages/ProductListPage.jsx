@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import ProductCard from "@/functions/ProductCard";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import { Input } from "@/components/ui/input";
 
 const ProductListPage = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const location = useLocation();
 
@@ -23,11 +25,13 @@ const ProductListPage = () => {
       );
       setProducts(response.data.products);
       setFilteredProducts(response.data.products);
+      setLoading(false);
     } catch (error) {
       console.error(
         "Error fetching products:",
         error.response ? error.response.data : error.message
       );
+      setLoading(false);
     }
   };
 
@@ -71,9 +75,13 @@ const ProductListPage = () => {
           </svg>
         </div>
         <ul className="flex flex-row flex-wrap justify-center">
-          {filteredProducts.map((each) => (
-            <ProductCard key={each._id} each={each} clickButt={clickButt} />
-          ))}
+          {loading
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <ProductCardSkeleton key={index} />
+              ))
+            : filteredProducts.map((each) => (
+                <ProductCard key={each._id} each={each} clickButt={clickButt} />
+              ))}
         </ul>
       </div>
     </>

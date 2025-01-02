@@ -123,6 +123,7 @@ const AppContent = () => {
             path="/order/:id"
             element={<ProtectedRoute element={<OrderDetails />} />}
           />
+          <Route path="*" element={<Home />} />
         </Routes>
       </div>
       {location.pathname !== "/login" && (
