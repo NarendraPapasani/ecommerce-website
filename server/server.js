@@ -35,8 +35,12 @@ app.get("*", (req, res) => {
 
 const PORT = process.env.PORT || 8000;
 
-connectDb().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+connectDb()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error(`Failed to connect to MongoDB: ${error.message}`);
   });
-});
