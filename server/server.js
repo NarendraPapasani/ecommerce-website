@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const dotenv = require("dotenv");
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const {
