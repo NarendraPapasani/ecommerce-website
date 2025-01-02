@@ -97,27 +97,30 @@ const getUserOrders = async (req, res) => {
 
 const getOrderById = async (req, res) => {
   try {
-    const { orderId } = req.params;
+    const { id } = req.params;
     const { email } = req.user;
-    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
         status: "error",
         message: `Invalid order ID format`,
       });
     }
-    const order = await Order.findById(orderId);
-    if (!order) {
+
+    const orderDetails = await Order.findOne(
+      { email, "orders._id": id },
+      { "orders.$": 1 }
+    );
+
+    if (!orderDetails) {
       return res.status(404).json({
         status: "error",
-        message: `Order with ID ${orderId} not found`,
+        message: `Order with ID ${id} not found`,
       });
     }
-    if (order.email !== email) {
-      return res.status(403).json({
-        status: "error",
-        message: `You are not authorized to view this order`,
-      });
-    }
+
+    const order = orderDetails.orders[0];
+
     res.status(200).json({
       status: "success",
       data: {

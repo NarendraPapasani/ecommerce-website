@@ -27,6 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { ComboboxDemo } from "@/components/comBox";
 
 const CheckOut = () => {
   const [addresses, setAddresses] = useState([]);
@@ -115,6 +116,10 @@ const CheckOut = () => {
         }
       );
       if (resp.status === 200) {
+        const response = await axios.delete(
+          "http://localhost:8000/api/cart/clear",
+          { withCredentials: true }
+        );
         window.location.href = "/orders";
       }
     } catch (error) {

@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 
-const orderItemSchema = new mongoose.Schema({});
-
 const orderSchema = new mongoose.Schema({
   email: {
     type: String,

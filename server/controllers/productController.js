@@ -41,46 +41,8 @@ const getProductsByClothingCategory = async (req, res) => {
   }
 };
 
-const getProductsByElectronicsCategory = async (req, res) => {
-  const { category } = req.query;
-  try {
-    const products = await Product.find({
-      category: new RegExp(category, "i"),
-    });
-    if (!products.length) {
-      return res
-        .status(404)
-        .json({ msg: "No products found in this category" });
-    }
-    res.status(200).json({ products });
-  } catch (error) {
-    console.error("Error fetching products by category:", error);
-    res.status(500).json({ msg: "Server error" });
-  }
-};
-
-const getProductsByJweleriesCategory = async (req, res) => {
-  const { category } = req.query;
-  try {
-    const products = await Product.find({
-      category: new RegExp(category, "i"),
-    });
-    if (!products.length) {
-      return res
-        .status(404)
-        .json({ msg: "No products found in this category" });
-    }
-    res.status(200).json({ products });
-  } catch (error) {
-    console.error("Error fetching products by category:", error);
-    res.status(500).json({ msg: "Server error" });
-  }
-};
-
 module.exports = {
   getAllProducts,
   getProductById,
   getProductsByClothingCategory,
-  getProductsByElectronicsCategory,
-  getProductsByJweleriesCategory,
 };

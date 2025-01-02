@@ -18,4 +18,7 @@ router.put("/increment/:id", cartController.incrementFromCart);
 //decrement from cart
 router.put("/decrement/:id", cartController.decrementFromCart);
 
+//clear cart
+router.delete("/clear", cartController.clearCart);
+
 module.exports = router;

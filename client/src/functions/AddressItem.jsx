@@ -104,7 +104,6 @@ const AddressItem = (props) => {
           withCredentials: true,
         }
       );
-      console.log(response);
       if (response.status === 201) {
         toast.success("Address deleted successfully");
         window.location.reload();

@@ -59,7 +59,6 @@ const AddAddressButtonComp = () => {
           withCredentials: true,
         }
       );
-      console.log(resp);
       if (resp.status === 200) {
         setLoading(false);
         setIsSaved(true);

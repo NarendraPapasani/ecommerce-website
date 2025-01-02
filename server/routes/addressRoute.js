@@ -8,6 +8,8 @@ router.post("/add", addressController.addAddress);
 
 router.get("/all", addressController.getAllAddress);
 
+router.get("/:addressId", addressController.getAddressById);
+
 router.put("/update/:addressId", addressController.updateAddress);
 
 router.delete("/delete/:addressId", addressController.deleteAddress);

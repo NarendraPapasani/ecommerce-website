@@ -15,7 +15,6 @@ const Address = () => {
         withCredentials: true,
       });
       const respData = resp.data;
-      console.log(respData.address.addresses);
       setAddressList(respData.address.addresses);
     } catch (error) {
       console.log("client error", error);

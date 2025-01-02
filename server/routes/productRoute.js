@@ -11,8 +11,4 @@ router.get("/:id", productController.getProductById);
 
 router.get("/", productController.getProductsByClothingCategory);
 
-router.get("/", productController.getProductsByElectronicsCategory);
-
-router.get("/", productController.getProductsByJweleriesCategory);
-
 module.exports = router;

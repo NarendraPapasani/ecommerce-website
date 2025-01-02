@@ -9,6 +9,6 @@ router.get("/all", orderController.getAllOrders);
 
 router.get("/user", orderController.getUserOrders);
 
-router.get("/:orderId", orderController.getOrderById);
+router.get("/:id", orderController.getOrderById);
 
 module.exports = router;

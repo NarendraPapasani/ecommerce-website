@@ -10,7 +10,7 @@ import {
 import Login from "./Pages/login";
 import Cart from "./Pages/cart";
 import Home from "./Pages/home";
-import MyProfile from "./Pages/profile";
+import MyProfile from "./Pages/Profile";
 import Cookies from "js-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
@@ -29,6 +29,8 @@ import {
   MenubarSubTrigger,
   MenubarTrigger,
 } from "@/components/ui/menubar";
+
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import {
   AlertDialog,
@@ -52,6 +54,7 @@ import cart from "./Pages/cart";
 import Address from "./Pages/Address";
 import CheckOut from "./Pages/CheckOut";
 import Orders from "./Pages/Orders";
+import OrderDetails from "./Pages/OrderDetails";
 
 const AppContent = () => {
   const location = useLocation();
@@ -116,6 +119,10 @@ const AppContent = () => {
             path="/orders"
             element={<ProtectedRoute element={<Orders />} />}
           />
+          <Route
+            path="/order/:id"
+            element={<ProtectedRoute element={<OrderDetails />} />}
+          />
         </Routes>
       </div>
       {location.pathname !== "/login" && (
@@ -143,12 +150,6 @@ const AppContent = () => {
                     >
                       Wish list
                     </MenubarCheckboxItem>
-                    <MenubarItem
-                      inset
-                      className="text-lg sm:text-xl md:text-2xl lg:text-xl"
-                    >
-                      liked items
-                    </MenubarItem>
                   </MenubarContent>
                 </MenubarMenu>
               </MenubarMenu>
@@ -168,7 +169,7 @@ const AppContent = () => {
                     <MenubarSubTrigger className="text-lg sm:text-xl md:text-2xl lg:text-xl">
                       Categories
                     </MenubarSubTrigger>
-                    <MenubarSubContent className="ml-3">
+                    <MenubarSubContent className="ml-3 mb-24">
                       <MenubarItem className="text-lg sm:text-xl md:text-2xl lg:text-xl">
                         Search from All
                       </MenubarItem>
@@ -201,12 +202,10 @@ const AppContent = () => {
                   Account
                 </MenubarTrigger>
                 <MenubarContent className="mb-4">
-                  <MenubarCheckboxItem className="text-lg sm:text-xl md:text-2xl lg:text-xl">
-                    My Profile
-                  </MenubarCheckboxItem>
                   <MenubarCheckboxItem
                     checked
                     className="text-lg sm:text-xl md:text-2xl lg:text-xl"
+                    onClick={() => (window.location.href = "/orders")}
                   >
                     My Orders
                   </MenubarCheckboxItem>
@@ -222,13 +221,13 @@ const AppContent = () => {
                     <AlertDialogTrigger className="w-full text-lg sm:text-xl md:text-2xl lg:text-xl">
                       {!jwt ? (
                         <Button
-                          className="w-full text-lg sm:text-xl md:text-2xl lg:text-xl"
+                          className="w-full text-xl sm:text-xl md:text-2xl lg:text-xl"
                           onClick={() => (window.location.href = "/login")}
                         >
                           Login
                         </Button>
                       ) : (
-                        <Button className="w-full text-lg sm:text-xl md:text-2xl lg:text-xl">
+                        <Button className="w-full text-xl sm:text-xl md:text-2xl lg:text-xl">
                           Logout
                         </Button>
                       )}
@@ -255,6 +254,10 @@ const AppContent = () => {
                 </MenubarContent>
               </MenubarMenu>
             </Menubar>
+            <Avatar className="ml-4 cursor-pointer">
+              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
           </div>
         </footer>
       )}

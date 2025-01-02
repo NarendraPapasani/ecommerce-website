@@ -155,4 +155,36 @@ const deleteAddress = async (req, res) => {
   }
 };
 
-module.exports = { addAddress, getAllAddress, updateAddress, deleteAddress };
+const getAddressById = async (req, res) => {
+  try {
+    const { addressId } = req.params;
+    const { email } = req.user;
+    const address = await Address.findOne({ email });
+    if (!address) {
+      return res.status(404).json({
+        status: "error",
+        message: "Address not found",
+      });
+    }
+    const addressToGet = address.addresses.filter(
+      (address) => address._id.toString() === addressId
+    );
+    if (!addressToGet) {
+      return res.status(404).json({
+        status: "error",
+        message: "Address not found",
+      });
+    }
+    res.status(200).json({ status: "success", address: addressToGet });
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
+  }
+};
+
+module.exports = {
+  addAddress,
+  getAllAddress,
+  updateAddress,
+  deleteAddress,
+  getAddressById,
+};
