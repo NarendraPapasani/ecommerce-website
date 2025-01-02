@@ -22,13 +22,16 @@ app.use(
 );
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, "../client/dist")));
 
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/products", require("./routes/productRoute"));
 app.use("/api/cart", authenticateController, require("./routes/cartRoute"));
-
-// The "catchall" handler: for any request that doesn't match one above, send back React's index.html file.
+app.use(
+  "/api/address",
+  authenticateController,
+  require("./routes/addressRoute")
+);
+app.use("/api/order", authenticateController, require("./routes/orderRoute"));
 
 const PORT = process.env.PORT || 8000;
 
