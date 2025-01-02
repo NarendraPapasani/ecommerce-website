@@ -22,6 +22,7 @@ app.use(
 );
 
 // Serve static files from the React app
+app.use(express.static(path.join(__dirname, "../client/dist")));
 
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/products", require("./routes/productRoute"));
@@ -34,6 +35,10 @@ app.use(
 app.use("/api/order", authenticateController, require("./routes/orderRoute"));
 
 const PORT = process.env.PORT || 8000;
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+});
 
 connectDb()
   .then(() => {
