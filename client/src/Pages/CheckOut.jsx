@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
+import { RotatingLines } from "react-loader-spinner";
 
 import {
   FaAddressCard,
@@ -30,6 +31,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ComboboxDemo } from "@/components/comBox";
 import { useNavigate } from "react-router-dom";
+import { set } from "zod";
 
 const CheckOut = () => {
   const [addresses, setAddresses] = useState([]);
@@ -43,6 +45,7 @@ const CheckOut = () => {
   const [couponMessage, setCouponMessage] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isPrivacyPolicyChecked, setIsPrivacyPolicyChecked] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const jwt = Cookies.get("jwt1");
 
@@ -64,8 +67,10 @@ const CheckOut = () => {
           withCredentials: true,
         });
         setAddresses(response.data.address.addresses);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching addresses:", error);
+        setLoading(false);
       }
     };
 
@@ -147,33 +152,50 @@ const CheckOut = () => {
             <FaAddressCard className="inline-block mr-2" /> Select Address
           </Label>
         </div>
-        <div className="bg-gray-800 p-4 rounded-md">
-          {addresses.length !== 0 ? (
-            <select
-              id="addressDropdown"
-              className="w-full p-2 border border-gray-300 rounded-md text-white bg-black"
-              placeholder="select an address"
-              onChange={(e) => handleAddressSelect(addresses[e.target.value])}
-            >
-              <option value="">Select an address</option>
-              {addresses.map((address, index) => (
-                <option key={address.id} value={index}>
-                  {address.fullName} - {address.town}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <div className="text-white text-center">
-              <h1 className="text-white text-2xl">No address found </h1>
-              <button
-                onClick={addNewAddress}
-                className="text-blue-400 hover:underline"
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <RotatingLines
+              visible={true}
+              height="30"
+              width="30"
+              color="blue"
+              strokeWidth="5"
+              animationDuration="0.75"
+              ariaLabel="rotating-lines-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            />
+          </div>
+        ) : (
+          <div className="bg-gray-800 p-4 rounded-md">
+            {addresses.length !== 0 ? (
+              <select
+                id="addressDropdown"
+                className="w-full p-2 border border-gray-300 rounded-md text-white bg-black"
+                placeholder="select an address"
+                onChange={(e) => handleAddressSelect(addresses[e.target.value])}
               >
-                Add new address
-              </button>
-            </div>
-          )}
-        </div>
+                <option value="">Select an address</option>
+                {addresses.map((address, index) => (
+                  <option key={address.id} value={index}>
+                    {address.fullName} - {address.town}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <div className="text-white text-center">
+                <h1 className="text-white text-2xl">No address found </h1>
+                <button
+                  onClick={addNewAddress}
+                  className="text-blue-400 hover:underline"
+                >
+                  Add new address
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         {isAddressFormVisible && selectedAddress && (
           <div className="mt-4 bg-gray-700 p-4 rounded-md">
             <div className="text-white mb-4 flex justify-between items-center">

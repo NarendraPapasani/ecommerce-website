@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import ProductCard from "@/functions/ProductCard";
-import ProductCardSkeleton from "@/components/ProductCardSkeleton";
+import ProductCardSkeleton from "@/components/skeletons/ProductCardSkeleton";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 

@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import ProductCard from "@/functions/ProductCard";
+import ProductCardSkeleton from "@/components/skeletons/ProductCardSkeleton";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
+import { set } from "react-hook-form";
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getProducts();
@@ -17,8 +20,10 @@ const Products = () => {
       const response = await axios.get("/api/products/all");
       setProducts(response.data.products);
       setFilteredProducts(response.data.products);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching products:", error);
+      setLoading(false);
     }
   };
 
@@ -61,9 +66,13 @@ const Products = () => {
         </svg>
       </div>
       <ul className="flex flex-row flex-wrap justify-center">
-        {filteredProducts.map((each) => (
-          <ProductCard key={each._id} each={each} clickButt={clickButt} />
-        ))}
+        {loading
+          ? Array.from({ length: 6 }).map((_, index) => (
+              <ProductCardSkeleton key={index} />
+            ))
+          : filteredProducts.map((each) => (
+              <ProductCard key={each._id} each={each} clickButt={clickButt} />
+            ))}
       </ul>
     </div>
   );

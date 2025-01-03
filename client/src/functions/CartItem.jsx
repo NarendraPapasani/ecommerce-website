@@ -6,9 +6,10 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { RotatingLines } from "react-loader-spinner";
 
 const CartItem = (props) => {
-  const { each } = props;
+  const { each, loading1 } = props;
   const { image, price, productId, quantity, title, _id } = each;
   const navigate = useNavigate();
 
@@ -39,7 +40,22 @@ const CartItem = (props) => {
             >
               <FaMinus />
             </button>
-            <span className="text-white mx-2">{quantity}</span>
+            {loading1 ? (
+              <RotatingLines
+                visible={true}
+                height="20"
+                width="20"
+                color="blue"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />
+            ) : (
+              <span className="text-white mx-2">{quantity}</span>
+            )}
+
             <button
               className="text-white hover:text-white transition duration-300 ease-in-out mx-2 bg-zinc-400 p-1 rounded"
               onClick={() => props.increaseQuantity(productId)}
