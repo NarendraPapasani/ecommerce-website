@@ -31,6 +31,12 @@ app.use(
 );
 app.use("/api/order", authenticateController, require("./routes/orderRoute"));
 
+app.get("/", (req, res) => {
+  res.send("Server is running");
+  res.sendFile(path.resolve(__dirname, "../client/dist/index.html"));
+  console.log(path.resolve(__dirname, "../client/dist/index.html"));
+});
+
 const PORT = process.env.PORT || 8000;
 
 connectDb()
