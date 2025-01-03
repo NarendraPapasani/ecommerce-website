@@ -21,7 +21,7 @@ const ProductListPage = () => {
   const fetchProductsByCategory = async (category) => {
     try {
       const response = await axios.get(
-        `https://ecommified.netlify.app/products?category=${category}`
+        `http://localhost:8000/api/products?category=${category}`
       );
       setProducts(response.data.products);
       setFilteredProducts(response.data.products);
