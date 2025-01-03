@@ -223,7 +223,10 @@ const AppContent = () => {
                     {!jwt ? (
                       <Button
                         className="w-full text-xl sm:text-xl md:text-2xl lg:text-xl"
-                        onClick={() => (window.location.href = "/login")}
+                        onClick={() =>
+                          (window.location.href =
+                            "https://ecommerce-website-crkh.onrender.com/login")
+                        }
                       >
                         Login
                       </Button>
