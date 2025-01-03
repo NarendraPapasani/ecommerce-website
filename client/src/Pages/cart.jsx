@@ -8,7 +8,6 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import { Button } from "@/components/ui/button";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
 
 const Cart = () => {
   const [cartList, setCartList] = useState([]);
