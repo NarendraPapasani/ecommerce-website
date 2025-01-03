@@ -82,6 +82,7 @@ const addToCart = async (req, res) => {
       status: "error",
       message: error.message,
     });
+    console.log(error);
   }
 };
 
