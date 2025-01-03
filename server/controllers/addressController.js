@@ -41,7 +41,7 @@ const addAddress = async (req, res) => {
     address.addresses.push(newAddress);
     await address.save();
 
-    res.json({
+    res.status(200).json({
       status: "success",
       message: "Address added successfully",
       id: newAddress.addressId,

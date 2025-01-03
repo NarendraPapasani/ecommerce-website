@@ -110,7 +110,7 @@ const CheckOut = () => {
   };
 
   const addNewAddress = () => {
-    navigate("/address");
+    navigate("/addresses");
   };
 
   const handleProceed = async () => {
@@ -141,7 +141,6 @@ const CheckOut = () => {
             withCredentials: true,
           }
         );
-        navigate("/order");
       }
     } catch (error) {
       console.error("Error placing order:", error);

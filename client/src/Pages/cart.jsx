@@ -70,6 +70,9 @@ const Cart = () => {
         `https://ecommerce-website-crkh.onrender.com/api/cart/increment/${_id}`,
         {},
         {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
           withCredentials: true,
         }
       );
@@ -85,6 +88,9 @@ const Cart = () => {
         `https://ecommerce-website-crkh.onrender.com/api/cart/decrement/${_id}`,
         {},
         {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
           withCredentials: true,
         }
       );
@@ -100,6 +106,9 @@ const Cart = () => {
       const resp = await axios.delete(
         `https://ecommerce-website-crkh.onrender.com/api/cart/remove/${_id}`,
         {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
           withCredentials: true,
         }
       );
