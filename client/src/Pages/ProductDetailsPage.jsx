@@ -44,6 +44,9 @@ const ProductDetailsPage = () => {
       "https://ecommerce-website-crkh.onrender.com/api/cart/add",
       cartItem,
       {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
         withCredentials: true,
       }
     );

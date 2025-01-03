@@ -3,6 +3,7 @@ import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import Cookies from "js-cookie";
 
 import {
   FaAddressCard,
@@ -43,6 +44,7 @@ const CheckOut = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isPrivacyPolicyChecked, setIsPrivacyPolicyChecked] = useState(false);
   const navigate = useNavigate();
+  const jwt = Cookies.get("jwt");
 
   const toggleAddressForm = () => {
     setIsAddressFormVisible(!isAddressFormVisible);
@@ -58,6 +60,9 @@ const CheckOut = () => {
         const response = await axios.get(
           "https://ecommerce-website-crkh.onrender.com/api/address/all",
           {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
             withCredentials: true,
           }
         );
@@ -72,6 +77,9 @@ const CheckOut = () => {
         const response = await axios.get(
           "https://ecommerce-website-crkh.onrender.com/api/cart/all",
           {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
             withCredentials: true,
           }
         );
@@ -117,13 +125,21 @@ const CheckOut = () => {
         "https://ecommerce-website-crkh.onrender.com/api/order/add",
         data,
         {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
           withCredentials: true,
         }
       );
       if (resp.status === 200) {
         const response = await axios.delete(
           "https://ecommerce-website-crkh.onrender.com/api/cart/clear",
-          { withCredentials: true }
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+            withCredentials: true,
+          }
         );
         navigate("/order");
       }

@@ -29,6 +29,7 @@ import { Label } from "@/components/ui/label";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const AddressItem = (props) => {
   const { each } = props;
@@ -59,6 +60,7 @@ const AddressItem = (props) => {
     LandMark: LandMark,
   });
   const navigate = useNavigate();
+  const jwt = Cookies.get("jwt");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -82,6 +84,9 @@ const AddressItem = (props) => {
         `https://ecommerce-website-crkh.onrender.com/api/address/update/${each.addressId}`,
         address,
         {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
           withCredentials: true,
         }
       );
@@ -103,6 +108,9 @@ const AddressItem = (props) => {
       const response = await axios.delete(
         `https://ecommerce-website-crkh.onrender.com/api/address/delete/${each.addressId}`,
         {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
           withCredentials: true,
         }
       );

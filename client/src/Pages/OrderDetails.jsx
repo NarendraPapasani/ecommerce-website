@@ -9,11 +9,13 @@ import {
   FaMapMarkerAlt,
 } from "react-icons/fa";
 import { Scrollbars } from "react-custom-scrollbars-2";
+import Cookies from "js-cookie";
 
 const OrderDetails = () => {
   const [orderDetails, setOrderDetails] = useState({});
   const [address, setAddress] = useState({});
   const { id } = useParams();
+  const jwt = Cookies.get("jwt");
 
   useEffect(() => {
     fetchOrderDetails();
@@ -24,6 +26,9 @@ const OrderDetails = () => {
       const response = await axios.get(
         `https://ecommerce-website-crkh.onrender.com/api/address/${addressId}`,
         {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
           withCredentials: true,
         }
       );
@@ -38,6 +43,9 @@ const OrderDetails = () => {
       const response = await axios.get(
         `https://ecommerce-website-crkh.onrender.com/api/order/${id}`,
         {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
           withCredentials: true,
         }
       );

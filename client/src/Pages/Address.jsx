@@ -2,18 +2,23 @@ import AddressItem from "@/functions/AddressItem";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import AddAddressButtonComp from "@/functions/addAddressButtonComp";
+import Cookies from "js-cookie";
 
 const Address = () => {
   const [addressList, setAddressList] = useState([]);
   useEffect(() => {
     getAddress();
   }, []);
+  const jwt = Cookies.get("jwt");
 
   const getAddress = async () => {
     try {
       const resp = await axios.get(
         "https://ecommerce-website-crkh.onrender.com/api/address/all",
         {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
           withCredentials: true,
         }
       );

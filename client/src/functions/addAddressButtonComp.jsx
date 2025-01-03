@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const AddAddressButtonComp = () => {
   const [address, setAddress] = useState({
@@ -33,6 +34,7 @@ const AddAddressButtonComp = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const navigate = useNavigate();
+  const jwt = Cookies.get("jwt");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -58,6 +60,9 @@ const AddAddressButtonComp = () => {
         "https://ecommerce-website-crkh.onrender.com/api/address/add",
         address,
         {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
           withCredentials: true,
         }
       );

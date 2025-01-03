@@ -8,6 +8,7 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 import { Button } from "@/components/ui/button";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const Cart = () => {
   const [cartList, setCartList] = useState([]);
@@ -15,6 +16,7 @@ const Cart = () => {
   const [originalPrice, setOriginalPrice] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
   const discountPercentage = 2;
+  const jwt = Cookies.get("jwt");
   const navigate = useNavigate();
   useEffect(() => {
     getCartItems();

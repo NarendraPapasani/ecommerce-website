@@ -3,6 +3,7 @@ import axios from "axios";
 import OrderItem from "@/functions/OrderItem";
 import { Input } from "@/components/ui/input";
 import { Scrollbars } from "react-custom-scrollbars-2";
+import Cookies from "js-cookie";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -10,12 +11,16 @@ const Orders = () => {
   useEffect(() => {
     getOrders();
   }, []);
+  const jwt = Cookies.get("jwt");
 
   const getOrders = async () => {
     try {
       const resp = await axios.get(
         "https://ecommerce-website-crkh.onrender.com/api/order/user",
         {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
           withCredentials: true,
         }
       );
