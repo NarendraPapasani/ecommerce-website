@@ -21,6 +21,7 @@ app.use(
   })
 );
 
+app.use(express.static(path.resolve(__dirname, "../client/dist")));
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/products", require("./routes/productRoute"));
 app.use("/api/cart", authenticateController, require("./routes/cartRoute"));
