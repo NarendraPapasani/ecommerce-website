@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProductCard from "@/functions/ProductCard";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import { Input } from "@/components/ui/input";
+import { Navigate } from "react-router-dom";
 
 const ProductListPage = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   const location = useLocation();
 
@@ -44,7 +47,7 @@ const ProductListPage = () => {
   };
 
   const clickButt = (id) => {
-    window.location.href = `/product/${id}`;
+    navigate(`/product/${id}`);
   };
 
   return (
