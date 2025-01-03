@@ -42,6 +42,9 @@ const Cart = () => {
       const resp = await axios.get(
         "https://ecommerce-website-crkh.onrender.com/api/cart/all",
         {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
           withCredentials: true,
         }
       );
