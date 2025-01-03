@@ -21,7 +21,7 @@ const ProductListPage = () => {
   const fetchProductsByCategory = async (category) => {
     try {
       const response = await axios.get(
-        `https://shiny-dasik-9cf343.netlify.app/api/products?category=${category}`
+        `http://localhost:8000/api/products?category=${category}`
       );
       setProducts(response.data.products);
       setFilteredProducts(response.data.products);
