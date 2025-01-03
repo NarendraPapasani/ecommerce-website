@@ -21,7 +21,6 @@ app.use(
   })
 );
 
-app.use(express.static(path.resolve(__dirname, "../client/dist")));
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/products", require("./routes/productRoute"));
 app.use("/api/cart", authenticateController, require("./routes/cartRoute"));
@@ -34,7 +33,7 @@ app.use("/api/order", authenticateController, require("./routes/orderRoute"));
 
 app.get("/", (req, res) => {
   res.send("Server is running");
-  res.sendFile(path.resolve(__dirname, "../client/dist/index.html"));
+  res.sendFile(path.resolve(__dirname, "../client/index.html"));
   console.log(path.resolve(__dirname, "../client/dist/index.html"));
 });
 
