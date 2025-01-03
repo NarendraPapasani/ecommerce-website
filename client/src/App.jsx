@@ -126,142 +126,143 @@ const AppContent = () => {
           <Route path="*" element={<Home />} />
         </Routes>
       </div>
-      {location.pathname !== "/login" && (
-        <footer>
-          <div className="flex justify-center items-center">
-            <Menubar className="h-16 lg:h-16 sm:h-20">
-              <MenubarMenu className="mr-2 sm:mr-4">
-                <MenubarTrigger className="text-lg text-black font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
-                  <Link to="/">Home</Link>
-                </MenubarTrigger>
-                <MenubarMenu>
-                  <MenubarTrigger className="text-lg text-black font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
-                    Cart
-                  </MenubarTrigger>
-                  <MenubarContent className="mb-4">
-                    <MenubarCheckboxItem
-                      className="text-lg sm:text-xl md:text-2xl lg:text-xl"
-                      onClick={clickCart}
-                    >
-                      My Picks
-                    </MenubarCheckboxItem>
-                    <MenubarCheckboxItem
-                      checked
-                      className="text-lg sm:text-xl md:text-2xl lg:text-xl"
-                    >
-                      Wish list
-                    </MenubarCheckboxItem>
-                  </MenubarContent>
-                </MenubarMenu>
-              </MenubarMenu>
-              <MenubarMenu>
-                <MenubarTrigger className="text-lg text-black font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
-                  Products
-                </MenubarTrigger>
-                <MenubarContent className="mb-4 ml-4">
-                  <MenubarItem
-                    className="text-lg sm:text-xl md:text-2xl lg:text-xl"
-                    onClick={clickAllProd}
-                  >
-                    All Products
-                  </MenubarItem>
-                  <MenubarSeparator />
-                  <MenubarSub>
-                    <MenubarSubTrigger className="text-lg sm:text-xl md:text-2xl lg:text-xl">
-                      Categories
-                    </MenubarSubTrigger>
-                    <MenubarSubContent className="ml-3 mb-24">
-                      <MenubarItem className="text-lg sm:text-xl md:text-2xl lg:text-xl">
-                        Search from All
-                      </MenubarItem>
-                      <MenubarSeparator />
-                      <MenubarItem
-                        className="text-lg sm:text-xl md:text-2xl lg:text-xl"
-                        onClick={clickClothProd}
-                      >
-                        Clothing
-                      </MenubarItem>
-                      <MenubarItem
-                        className="text-lg sm:text-xl md:text-2xl lg:text-xl"
-                        onClick={clickElecProd}
-                      >
-                        Electronics
-                      </MenubarItem>
-                      <MenubarItem
-                        className="text-lg sm:text-xl md:text-2xl lg:text-xl"
-                        onClick={clickJweProd}
-                      >
-                        Jweleries
-                      </MenubarItem>
-                    </MenubarSubContent>
-                  </MenubarSub>
-                </MenubarContent>
-              </MenubarMenu>
 
+      <footer>
+        <div className="flex justify-center items-center">
+          <Menubar className="h-16 lg:h-16 sm:h-20">
+            <MenubarMenu className="mr-2 sm:mr-4">
+              <MenubarTrigger className="text-lg text-black font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
+                <Link to="/">Home</Link>
+              </MenubarTrigger>
               <MenubarMenu>
-                <MenubarTrigger className="text-lg font-normal text-black hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
-                  Account
+                <MenubarTrigger className="text-lg text-black font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
+                  Cart
                 </MenubarTrigger>
                 <MenubarContent className="mb-4">
                   <MenubarCheckboxItem
+                    className="text-lg sm:text-xl md:text-2xl lg:text-xl"
+                    onClick={clickCart}
+                  >
+                    My Picks
+                  </MenubarCheckboxItem>
+                  <MenubarCheckboxItem
                     checked
                     className="text-lg sm:text-xl md:text-2xl lg:text-xl"
-                    onClick={() => (window.location.href = "/orders")}
                   >
-                    My Orders
+                    Wish list
                   </MenubarCheckboxItem>
-                  <MenubarItem
-                    inset
-                    className="text-lg sm:text-xl md:text-2xl lg:text-xl"
-                    onClick={clickAddress}
-                  >
-                    My Address
-                  </MenubarItem>
-                  <MenubarSeparator />
-                  <AlertDialog>
-                    <AlertDialogTrigger className="w-full text-lg sm:text-xl md:text-2xl lg:text-xl">
-                      {!jwt ? (
-                        <Button
-                          className="w-full text-xl sm:text-xl md:text-2xl lg:text-xl"
-                          onClick={() => (window.location.href = "/login")}
-                        >
-                          Login
-                        </Button>
-                      ) : (
-                        <Button className="w-full text-xl sm:text-xl md:text-2xl lg:text-xl">
-                          Logout
-                        </Button>
-                      )}
-                    </AlertDialogTrigger>
-                    {jwt !== undefined && (
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you want to Logout?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            You can always login back
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={logOutFunc}>
-                            Continue
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    )}
-                  </AlertDialog>
                 </MenubarContent>
               </MenubarMenu>
-            </Menubar>
+            </MenubarMenu>
+            <MenubarMenu>
+              <MenubarTrigger className="text-lg text-black font-normal hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
+                Products
+              </MenubarTrigger>
+              <MenubarContent className="mb-4 ml-4">
+                <MenubarItem
+                  className="text-lg sm:text-xl md:text-2xl lg:text-xl"
+                  onClick={clickAllProd}
+                >
+                  All Products
+                </MenubarItem>
+                <MenubarSeparator />
+                <MenubarSub>
+                  <MenubarSubTrigger className="text-lg sm:text-xl md:text-2xl lg:text-xl">
+                    Categories
+                  </MenubarSubTrigger>
+                  <MenubarSubContent className="ml-3 mb-24">
+                    <MenubarItem className="text-lg sm:text-xl md:text-2xl lg:text-xl">
+                      Search from All
+                    </MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem
+                      className="text-lg sm:text-xl md:text-2xl lg:text-xl"
+                      onClick={clickClothProd}
+                    >
+                      Clothing
+                    </MenubarItem>
+                    <MenubarItem
+                      className="text-lg sm:text-xl md:text-2xl lg:text-xl"
+                      onClick={clickElecProd}
+                    >
+                      Electronics
+                    </MenubarItem>
+                    <MenubarItem
+                      className="text-lg sm:text-xl md:text-2xl lg:text-xl"
+                      onClick={clickJweProd}
+                    >
+                      Jweleries
+                    </MenubarItem>
+                  </MenubarSubContent>
+                </MenubarSub>
+              </MenubarContent>
+            </MenubarMenu>
+
+            <MenubarMenu>
+              <MenubarTrigger className="text-lg font-normal text-black hover:bg-slate-500 hover:text-white italic cursor-pointer sm:text-xl md:text-2xl lg:text-xl">
+                Account
+              </MenubarTrigger>
+              <MenubarContent className="mb-4">
+                <MenubarCheckboxItem
+                  checked
+                  className="text-lg sm:text-xl md:text-2xl lg:text-xl"
+                  onClick={() => (window.location.href = "/orders")}
+                >
+                  My Orders
+                </MenubarCheckboxItem>
+                <MenubarItem
+                  inset
+                  className="text-lg sm:text-xl md:text-2xl lg:text-xl"
+                  onClick={clickAddress}
+                >
+                  My Address
+                </MenubarItem>
+                <MenubarSeparator />
+                <AlertDialog>
+                  <AlertDialogTrigger className="w-full text-lg sm:text-xl md:text-2xl lg:text-xl">
+                    {!jwt ? (
+                      <Button
+                        className="w-full text-xl sm:text-xl md:text-2xl lg:text-xl"
+                        onClick={() => (window.location.href = "/login")}
+                      >
+                        Login
+                      </Button>
+                    ) : (
+                      <Button className="w-full text-xl sm:text-xl md:text-2xl lg:text-xl">
+                        Logout
+                      </Button>
+                    )}
+                  </AlertDialogTrigger>
+                  {jwt !== undefined && (
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you want to Logout?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You can always login back
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={logOutFunc}>
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  )}
+                </AlertDialog>
+              </MenubarContent>
+            </MenubarMenu>
+          </Menubar>
+          {jwt && (
             <Avatar className="ml-4 cursor-pointer">
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
-          </div>
-        </footer>
-      )}
+          )}
+        </div>
+      </footer>
     </div>
   );
 };
