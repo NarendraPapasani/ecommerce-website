@@ -61,7 +61,7 @@ const LoginForm = () => {
           toast.success(response.data.msg);
           Cookies.set("jwt", response.data.token, { expires: 1 });
           toast.success("Login successful");
-          window.location.href = "/";
+          navigate("/");
         } else {
           setIsLoaded(false);
           toast.error(response.data.msg);

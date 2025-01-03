@@ -20,14 +20,16 @@ const ProductCard = (props) => {
       productId: _id,
       quantity: 1,
     };
-    await axios.post(
+    const resp = await axios.post(
       "https://ecommerce-website-crkh.onrender.com/api/cart/add",
       cartItem,
       {
         withCredentials: true,
       }
     );
-    toast.success("Added to cart");
+    if (resp.status === 200) {
+      toast.success("Added to cart");
+    }
   };
   return (
     <>

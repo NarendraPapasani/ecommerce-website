@@ -117,7 +117,7 @@ const Signup = () => {
         if (resp.status === 201) {
           toast.success("User created successfully");
           setIsLoaded(false);
-          navigate("/my-profile");
+          navigate("/");
         } else {
           toast.error(resp.data.msg);
           setIsLoaded(false);

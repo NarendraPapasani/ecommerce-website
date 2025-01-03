@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const AddAddressButtonComp = () => {
   const [address, setAddress] = useState({
@@ -31,6 +32,7 @@ const AddAddressButtonComp = () => {
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -63,7 +65,10 @@ const AddAddressButtonComp = () => {
         setLoading(false);
         setIsSaved(true);
         toast.success("Address saved successfully!");
-        window.location.reload();
+        setTimeout(() => {
+          setIsDialogOpen(false);
+          setIsSaved(false);
+        }, 2000);
       }
     } catch (error) {
       console.log("client error", error);

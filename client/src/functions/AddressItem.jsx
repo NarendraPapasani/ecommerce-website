@@ -28,6 +28,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
 const AddressItem = (props) => {
   const { each } = props;
@@ -57,6 +58,7 @@ const AddressItem = (props) => {
     defaultAddress: defaultAddress,
     LandMark: LandMark,
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -85,7 +87,7 @@ const AddressItem = (props) => {
       );
       if (response.status === 201) {
         toast.success("Address updated successfully");
-        window.location.reload();
+        navigate("/address");
       } else {
         toast.error("Address not updated");
       }
@@ -106,7 +108,7 @@ const AddressItem = (props) => {
       );
       if (response.status === 201) {
         toast.success("Address deleted successfully");
-        window.location.reload();
+        navigate("/address");
       } else {
         toast.error("Address not deleted");
       }

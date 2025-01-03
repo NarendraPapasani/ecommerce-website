@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ProductCard from "@/functions/ProductCard";
 import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import { Input } from "@/components/ui/input";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const ProductListPage = () => {
   const [products, setProducts] = useState([]);
@@ -12,8 +11,6 @@ const ProductListPage = () => {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
-
-  const location = useLocation();
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);

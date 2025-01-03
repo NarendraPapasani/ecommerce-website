@@ -28,6 +28,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ComboboxDemo } from "@/components/comBox";
+import { useNavigate } from "react-router-dom";
 
 const CheckOut = () => {
   const [addresses, setAddresses] = useState([]);
@@ -41,6 +42,7 @@ const CheckOut = () => {
   const [couponMessage, setCouponMessage] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isPrivacyPolicyChecked, setIsPrivacyPolicyChecked] = useState(false);
+  const navigate = useNavigate();
 
   const toggleAddressForm = () => {
     setIsAddressFormVisible(!isAddressFormVisible);
@@ -100,7 +102,7 @@ const CheckOut = () => {
   };
 
   const addNewAddress = () => {
-    window.location.href = "/addresses";
+    navigate("/address");
   };
 
   const handleProceed = async () => {
@@ -123,7 +125,7 @@ const CheckOut = () => {
           "https://ecommerce-website-crkh.onrender.com/api/cart/clear",
           { withCredentials: true }
         );
-        window.location.href = "/orders";
+        navigate("/order");
       }
     } catch (error) {
       console.error("Error placing order:", error);

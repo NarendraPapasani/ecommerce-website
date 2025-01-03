@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import ProductCard from "@/functions/ProductCard";
 import { Input } from "@/components/ui/input";
-
+import { useNavigate } from "react-router-dom";
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getProducts();
@@ -32,7 +33,7 @@ const Products = () => {
   };
 
   const clickButt = (id) => {
-    window.location.href = `/product/${id}`;
+    navigate(`/product/${id}`);
   };
 
   return (

@@ -2,10 +2,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LoginForm from "@/functions/Login";
 import Signup from "@/functions/Signup";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
+  const navigate = useNavigate();
   const jwt = Cookies.get("jwt");
   if (jwt) {
-    window.location.href = "/";
+    navigate("/");
   }
   return (
     <div className="flex flex-col md:flex-row justify-around items-center min-h-screen p-4 md:p-0">

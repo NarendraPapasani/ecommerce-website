@@ -5,16 +5,18 @@ import {
   FaTruck,
   FaCheckCircle,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const CartItem = (props) => {
   const { each } = props;
   const { image, price, productId, quantity, title, _id } = each;
+  const navigate = useNavigate();
 
   const discountedPrice = (price * 1.15).toFixed(2);
   const roundedPrice = price.toFixed(2);
 
   const imageClick = () => {
-    window.location.href = `/product/${productId}`;
+    navigate(`/product/${productId}`);
   };
 
   return (

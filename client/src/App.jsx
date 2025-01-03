@@ -62,10 +62,10 @@ const AppContent = () => {
   const logOutFunc = () => {
     Cookies.remove("jwt");
     toast.success("Logged out successfully");
-    window.location.href = "/login";
+    navigate("/login");
   };
   const clickAllProd = () => {
-    window.location.href = "/products/all";
+    navigate("/products/all");
   };
 
   const jwt = Cookies.get("jwt");
@@ -74,23 +74,23 @@ const AppContent = () => {
   const navigate = useNavigate();
 
   const clickClothProd = () => {
-    window.location.href = "/products?category=clothing";
+    navigate("/products?category=clothing");
   };
 
   const clickElecProd = () => {
-    window.location.href = "/products?category=electronics";
+    navigate("/products?category=electronics");
   };
 
   const clickJweProd = () => {
-    window.location.href = "/products?category=jewelery";
+    navigate("/products?category=jewelery");
   };
 
   const clickCart = () => {
-    window.location.href = "/cart";
+    navigate("/cart");
   };
 
   const clickAddress = () => {
-    window.location.href = "/addresses";
+    navigate("/addresses");
   };
   return (
     <div className="app-container bg-zinc-950">
@@ -206,7 +206,7 @@ const AppContent = () => {
                 <MenubarCheckboxItem
                   checked
                   className="text-lg sm:text-xl md:text-2xl lg:text-xl"
-                  onClick={() => (window.location.href = "/orders")}
+                  onClick={() => navigate("/orders")}
                 >
                   My Orders
                 </MenubarCheckboxItem>
@@ -223,7 +223,7 @@ const AppContent = () => {
                     {!jwt ? (
                       <Button
                         className="w-full text-xl sm:text-xl md:text-2xl lg:text-xl"
-                        onClick={() => (window.location.href = "/login")}
+                        onClick={() => navigate("/login")}
                       >
                         Login
                       </Button>

@@ -1,4 +1,5 @@
 import { FaBox, FaMapMarkerAlt, FaDollarSign, FaIdBadge } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const OrderItem = (props) => {
   const { each } = props;
@@ -38,7 +39,7 @@ const OrderItem = (props) => {
         </div>
         <button
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md mt-2 md:mt-0"
-          onClick={() => (window.location.href = `/order/${_id}`)}
+          onClick={() => navigate(`/order/${_id}`)}
         >
           View Order
         </button>

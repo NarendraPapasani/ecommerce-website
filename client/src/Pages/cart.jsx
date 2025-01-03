@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { Button } from "@/components/ui/button";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const [cartList, setCartList] = useState([]);
@@ -14,7 +15,7 @@ const Cart = () => {
   const [originalPrice, setOriginalPrice] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
   const discountPercentage = 2;
-
+  const navigate = useNavigate();
   useEffect(() => {
     getCartItems();
   }, []);
@@ -110,7 +111,7 @@ const Cart = () => {
   };
 
   const handleShopNow = () => {
-    window.location.href = "/products/all";
+    navigate("/products/all");
   };
 
   return (
@@ -209,7 +210,7 @@ const Cart = () => {
                   <button
                     className="bg-green-500 border text-white py-1 px-4 md:py-2 rounded hover:bg-green-700 w-1/2"
                     style={{ height: "auto" }}
-                    onClick={() => (window.location.href = "/checkout")}
+                    onClick={() => navigate("/checkout")}
                   >
                     Checkout
                   </button>
