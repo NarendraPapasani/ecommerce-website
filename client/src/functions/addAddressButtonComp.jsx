@@ -53,7 +53,7 @@ const AddAddressButtonComp = () => {
     try {
       setLoading(true);
       const resp = await axios.post(
-        "http://localhost:8000/api/address/add",
+        "https://ecommerce-website-crkh.onrender.com/api/address/add",
         address,
         {
           withCredentials: true,

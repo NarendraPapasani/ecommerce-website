@@ -38,9 +38,12 @@ const Cart = () => {
   const getCartItems = async () => {
     try {
       const jwt = Cookies.get("jwt");
-      const resp = await axios.get("http://localhost:8000/api/cart/all", {
-        withCredentials: true,
-      });
+      const resp = await axios.get(
+        "https://ecommerce-website-crkh.onrender.com/api/cart/all",
+        {
+          withCredentials: true,
+        }
+      );
       const respData = resp.data.data.cart;
       setCartList(respData.items);
       calculateTotalPrice(respData.totalPrice);
@@ -59,7 +62,7 @@ const Cart = () => {
   const increaseQuantity = async (_id) => {
     try {
       const resp = await axios.put(
-        `http://localhost:8000/api/cart/increment/${_id}`,
+        `https://ecommerce-website-crkh.onrender.com/api/cart/increment/${_id}`,
         {},
         {
           withCredentials: true,
@@ -74,7 +77,7 @@ const Cart = () => {
   const decreaseQuantity = async (_id) => {
     try {
       const resp = await axios.put(
-        `http://localhost:8000/api/cart/decrement/${_id}`,
+        `https://ecommerce-website-crkh.onrender.com/api/cart/decrement/${_id}`,
         {},
         {
           withCredentials: true,
@@ -90,7 +93,7 @@ const Cart = () => {
   const deleteItem = async (_id) => {
     try {
       const resp = await axios.delete(
-        `http://localhost:8000/api/cart/remove/${_id}`,
+        `https://ecommerce-website-crkh.onrender.com/api/cart/remove/${_id}`,
         {
           withCredentials: true,
         }

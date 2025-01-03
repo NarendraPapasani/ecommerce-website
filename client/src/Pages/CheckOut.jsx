@@ -54,7 +54,7 @@ const CheckOut = () => {
     const fetchAddresses = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/address/all",
+          "https://ecommerce-website-crkh.onrender.com/api/address/all",
           {
             withCredentials: true,
           }
@@ -67,9 +67,12 @@ const CheckOut = () => {
 
     const fetchCartTotal = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/api/cart/all", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          "https://ecommerce-website-crkh.onrender.com/api/cart/all",
+          {
+            withCredentials: true,
+          }
+        );
         setCart(response.data.data.cart);
         setCartTotal(response.data.data.cart.totalPrice);
       } catch (error) {
@@ -109,7 +112,7 @@ const CheckOut = () => {
         paymentMethod,
       };
       const resp = await axios.post(
-        "http://localhost:8000/api/order/add",
+        "https://ecommerce-website-crkh.onrender.com/api/order/add",
         data,
         {
           withCredentials: true,
@@ -117,7 +120,7 @@ const CheckOut = () => {
       );
       if (resp.status === 200) {
         const response = await axios.delete(
-          "http://localhost:8000/api/cart/clear",
+          "https://ecommerce-website-crkh.onrender.com/api/cart/clear",
           { withCredentials: true }
         );
         window.location.href = "/orders";

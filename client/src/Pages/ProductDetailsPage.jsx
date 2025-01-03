@@ -16,7 +16,7 @@ const ProductDetailsPage = () => {
     const getProductDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/products/${id}`
+          `https://ecommerce-website-crkh.onrender.com/api/products/${id}`
         );
         setProductDetails(response.data.product);
       } catch (error) {
@@ -40,9 +40,13 @@ const ProductDetailsPage = () => {
       productId: productDetails._id,
       quantity: quantity,
     };
-    await axios.post("http://localhost:8000/api/cart/add", cartItem, {
-      withCredentials: true,
-    });
+    await axios.post(
+      "https://ecommerce-website-crkh.onrender.com/api/cart/add",
+      cartItem,
+      {
+        withCredentials: true,
+      }
+    );
     toast.success("Added to cart");
   };
 

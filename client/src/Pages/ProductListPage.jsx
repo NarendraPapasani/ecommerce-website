@@ -21,7 +21,7 @@ const ProductListPage = () => {
   const fetchProductsByCategory = async (category) => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/products?category=${category}`
+        `https://ecommerce-website-crkh.onrender.com/api/products?category=${category}`
       );
       setProducts(response.data.products);
       setFilteredProducts(response.data.products);

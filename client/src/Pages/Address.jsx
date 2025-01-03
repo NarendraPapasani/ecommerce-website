@@ -11,9 +11,12 @@ const Address = () => {
 
   const getAddress = async () => {
     try {
-      const resp = await axios.get("http://localhost:8000/api/address/all", {
-        withCredentials: true,
-      });
+      const resp = await axios.get(
+        "https://ecommerce-website-crkh.onrender.com/api/address/all",
+        {
+          withCredentials: true,
+        }
+      );
       const respData = resp.data;
       setAddressList(respData.address.addresses);
     } catch (error) {

@@ -13,9 +13,12 @@ const Orders = () => {
 
   const getOrders = async () => {
     try {
-      const resp = await axios.get("http://localhost:8000/api/order/user", {
-        withCredentials: true,
-      });
+      const resp = await axios.get(
+        "https://ecommerce-website-crkh.onrender.com/api/order/user",
+        {
+          withCredentials: true,
+        }
+      );
       const sortedOrders = resp.data.data.orders[0].orders.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );

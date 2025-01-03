@@ -33,7 +33,7 @@ export function ComboboxDemo() {
   const getAddress = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/address/all",
+        "https://ecommerce-website-crkh.onrender.com/api/address/all",
         {
           withCredentials: true,
         }

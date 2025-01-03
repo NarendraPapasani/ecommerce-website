@@ -50,7 +50,7 @@ const LoginForm = () => {
     if (username && password) {
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/auth/login",
+          "https://ecommerce-website-crkh.onrender.com/api/auth/login",
           {
             email: username,
             password,

@@ -77,7 +77,7 @@ const AddressItem = (props) => {
     }
     try {
       const response = await axios.put(
-        `http://localhost:8000/api/address/update/${each.addressId}`,
+        `https://ecommerce-website-crkh.onrender.com/api/address/update/${each.addressId}`,
         address,
         {
           withCredentials: true,
@@ -99,7 +99,7 @@ const AddressItem = (props) => {
   const handleDelete = async () => {
     try {
       const response = await axios.delete(
-        `http://localhost:8000/api/address/delete/${each.addressId}`,
+        `https://ecommerce-website-crkh.onrender.com/api/address/delete/${each.addressId}`,
         {
           withCredentials: true,
         }

@@ -22,7 +22,7 @@ const OrderDetails = () => {
   const getAddress = async (addressId) => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/address/${addressId}`,
+        `https://ecommerce-website-crkh.onrender.com/api/address/${addressId}`,
         {
           withCredentials: true,
         }
@@ -36,7 +36,7 @@ const OrderDetails = () => {
   const fetchOrderDetails = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/order/${id}`,
+        `https://ecommerce-website-crkh.onrender.com/api/order/${id}`,
         {
           withCredentials: true,
         }

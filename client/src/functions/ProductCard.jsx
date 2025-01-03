@@ -20,9 +20,13 @@ const ProductCard = (props) => {
       productId: _id,
       quantity: 1,
     };
-    await axios.post("http://localhost:8000/api/cart/add", cartItem, {
-      withCredentials: true,
-    });
+    await axios.post(
+      "https://ecommerce-website-crkh.onrender.com/api/cart/add",
+      cartItem,
+      {
+        withCredentials: true,
+      }
+    );
     toast.success("Added to cart");
   };
   return (
