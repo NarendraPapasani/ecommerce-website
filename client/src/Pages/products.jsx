@@ -14,9 +14,7 @@ const Products = () => {
 
   const getProducts = async () => {
     try {
-      const response = await axios.get(
-        "https://ecommerce-website-crkh.onrender.com/api/products/all"
-      );
+      const response = await axios.get("/api/products/all");
       setProducts(response.data.products);
       setFilteredProducts(response.data.products);
     } catch (error) {

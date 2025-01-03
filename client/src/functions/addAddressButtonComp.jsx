@@ -56,16 +56,12 @@ const AddAddressButtonComp = () => {
 
     try {
       setLoading(true);
-      const resp = await axios.post(
-        "https://ecommerce-website-crkh.onrender.com/api/address/add",
-        address,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-          withCredentials: true,
-        }
-      );
+      const resp = await axios.post("/api/address/add", address, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+        withCredentials: true,
+      });
       if (resp.status === 200) {
         setLoading(false);
         setIsSaved(true);

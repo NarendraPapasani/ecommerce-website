@@ -10,14 +10,12 @@ const ProductDetailsPage = () => {
   const { id } = useParams();
   const [productDetails, setProductDetails] = useState({});
   const [quantity, setQuantity] = useState(1);
-  const jwt = Cookies.get("jwt");
+  const jwt = Cookies.get("jwt1");
 
   useEffect(() => {
     const getProductDetails = async () => {
       try {
-        const response = await axios.get(
-          `https://ecommerce-website-crkh.onrender.com/api/products/${id}`
-        );
+        const response = await axios.get(`/api/products/${id}`);
         setProductDetails(response.data.product);
       } catch (error) {
         console.error("Error fetching product details:", error.message);
@@ -40,16 +38,12 @@ const ProductDetailsPage = () => {
       productId: productDetails._id,
       quantity: quantity,
     };
-    await axios.post(
-      "https://ecommerce-website-crkh.onrender.com/api/cart/add",
-      cartItem,
-      {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        withCredentials: true,
-      }
-    );
+    await axios.post("/api/cart/add", cartItem, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+      withCredentials: true,
+    });
     toast.success("Added to cart");
   };
 

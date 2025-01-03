@@ -13,6 +13,7 @@ import Home from "./Pages/home";
 import MyProfile from "./Pages/Profile";
 import Cookies from "js-cookie";
 import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import {
   Menubar,
@@ -60,15 +61,15 @@ const AppContent = () => {
   const location = useLocation();
 
   const logOutFunc = () => {
-    Cookies.remove("jwt");
+    Cookies.remove("jwt1");
     toast.success("Logged out successfully");
-    navigate("/login");
+    navigate("/");
   };
   const clickAllProd = () => {
     navigate("/products/all");
   };
 
-  const jwt = Cookies.get("jwt");
+  const jwt = Cookies.get("jwt1");
 
   // Inside your AppContent component
   const navigate = useNavigate();
@@ -263,6 +264,7 @@ const AppContent = () => {
           )}
         </div>
       </footer>
+      <ToastContainer />
     </div>
   );
 };

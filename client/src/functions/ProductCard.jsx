@@ -11,7 +11,7 @@ const ProductCard = (props) => {
     clickButt(_id);
   };
   const handleAddCart = async () => {
-    const jwt = Cookies.get("jwt");
+    const jwt = Cookies.get("jwt1");
     if (!jwt) {
       toast.error("Please login to add to cart");
       return;
@@ -20,16 +20,12 @@ const ProductCard = (props) => {
       productId: _id,
       quantity: 1,
     };
-    const resp = await axios.post(
-      "https://ecommerce-website-crkh.onrender.com/api/cart/add",
-      cartItem,
-      {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        withCredentials: true,
-      }
-    );
+    const resp = await axios.post("/api/cart/add", cartItem, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+      withCredentials: true,
+    });
     if (resp.status === 200) {
       toast.success("Added to cart");
     }

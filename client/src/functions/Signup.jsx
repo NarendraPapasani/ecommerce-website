@@ -104,16 +104,13 @@ const Signup = () => {
         firstName &&
         lastName
       ) {
-        const resp = await axios.post(
-          "https://ecommerce-website-crkh.onrender.com/api/auth/signup",
-          {
-            email,
-            username,
-            password,
-            firstName,
-            lastName,
-          }
-        );
+        const resp = await axios.post("/api/auth/signup", {
+          email,
+          username,
+          password,
+          firstName,
+          lastName,
+        });
         if (resp.status === 201) {
           toast.success("User created successfully");
           setIsLoaded(false);

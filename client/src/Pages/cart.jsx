@@ -15,7 +15,7 @@ const Cart = () => {
   const [originalPrice, setOriginalPrice] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
   const discountPercentage = 2;
-  const jwt = Cookies.get("jwt");
+  const jwt = Cookies.get("jwt1");
   const navigate = useNavigate();
   useEffect(() => {
     getCartItems();
@@ -39,16 +39,12 @@ const Cart = () => {
 
   const getCartItems = async () => {
     try {
-      const jwt = Cookies.get("jwt");
-      const resp = await axios.get(
-        "https://ecommerce-website-crkh.onrender.com/api/cart/all",
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-          withCredentials: true,
-        }
-      );
+      const resp = await axios.get("/api/cart/all", {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+        withCredentials: true,
+      });
       const respData = resp.data.data.cart;
       setCartList(respData.items);
       calculateTotalPrice(respData.totalPrice);
@@ -67,7 +63,7 @@ const Cart = () => {
   const increaseQuantity = async (_id) => {
     try {
       const resp = await axios.put(
-        `https://ecommerce-website-crkh.onrender.com/api/cart/increment/${_id}`,
+        `/api/cart/increment/${_id}`,
         {},
         {
           headers: {
@@ -85,7 +81,7 @@ const Cart = () => {
   const decreaseQuantity = async (_id) => {
     try {
       const resp = await axios.put(
-        `https://ecommerce-website-crkh.onrender.com/api/cart/decrement/${_id}`,
+        `/api/cart/decrement/${_id}`,
         {},
         {
           headers: {
@@ -103,15 +99,12 @@ const Cart = () => {
 
   const deleteItem = async (_id) => {
     try {
-      const resp = await axios.delete(
-        `https://ecommerce-website-crkh.onrender.com/api/cart/remove/${_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-          withCredentials: true,
-        }
-      );
+      const resp = await axios.delete(`/api/cart/remove/${_id}`, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+        withCredentials: true,
+      });
       toast("Item deleted", {
         type: "info",
         style: { backgroundColor: "orange", color: "white" },

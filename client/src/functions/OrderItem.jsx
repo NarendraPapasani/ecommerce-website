@@ -5,6 +5,7 @@ const OrderItem = (props) => {
   const { each } = props;
   const { addressId, cartItems, createdAt, orderStatus, totalPrice, _id } =
     each;
+  const navigate = useNavigate();
 
   return (
     <li className="bg-gray-800 w-full md:w-3/4 mt-4 text-white p-4 rounded-lg shadow-lg mb-4">

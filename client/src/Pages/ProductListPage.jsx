@@ -20,9 +20,7 @@ const ProductListPage = () => {
 
   const fetchProductsByCategory = async (category) => {
     try {
-      const response = await axios.get(
-        `https://ecommerce-website-crkh.onrender.com/api/products?category=${category}`
-      );
+      const response = await axios.get(`/api/products?category=${category}`);
       setProducts(response.data.products);
       setFilteredProducts(response.data.products);
       setLoading(false);

@@ -8,14 +8,12 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import exp from "constants";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
-  const jwt = Cookies.get("jwt");
   const navigate = useNavigate();
 
   const [usernameError, setUsernameError] = useState({
@@ -49,17 +47,14 @@ const LoginForm = () => {
     }
     if (username && password) {
       try {
-        const response = await axios.post(
-          "https://ecommerce-website-crkh.onrender.com/api/auth/login",
-          {
-            email: username,
-            password,
-          }
-        );
+        const response = await axios.post("/api/auth/login", {
+          email: username,
+          password,
+        });
         if (response.status === 200) {
           setIsLoaded(false);
-          toast.success(response.data.msg);
-          Cookies.set("jwt", response.data.token, { expires: 1 });
+          const token = response.data.token;
+          Cookies.set("jwt1", token, { expires: 1 });
           toast.success("Login successful");
           navigate("/");
         } else {
@@ -73,104 +68,94 @@ const LoginForm = () => {
     }
   };
   return (
-    <form
-      className="rounded-md border border-input bg-transparent px-3 py-10"
-      onSubmit={handleSubmit}
-    >
-      <div className="mb-4">
-        <label
-          htmlFor="username"
-          className="block text-left font-semibold text-white mb-2 italic"
-        >
-          Username/Email
-        </label>
-        <Input
-          type="text"
-          placeholder="Enter here..."
-          id="username"
-          className="w-full p-2 h-11"
-          onChange={handleUsername}
-        />
-        {usernameError.status && (
-          <p className="text-red-500 text-sm mt-1">{usernameError.message}</p>
-        )}
-      </div>
-      <div className="mb-4">
-        <label
-          htmlFor="password"
-          className="block text-left font-semibold text-white mb-2 italic"
-        >
-          Password
-        </label>
-        {showPassword ? (
+    <>
+      <form
+        className="rounded-md border border-input bg-transparent px-3 py-10"
+        onSubmit={handleSubmit}
+      >
+        <div className="mb-4">
+          <label
+            htmlFor="username"
+            className="block text-left font-semibold text-white mb-2 italic"
+          >
+            Username/Email
+          </label>
           <Input
             type="text"
-            placeholder="Password"
-            id="password"
+            placeholder="Enter here..."
+            id="username"
             className="w-full p-2 h-11"
-            onChange={handlePassword}
+            onChange={handleUsername}
           />
-        ) : (
-          <Input
-            type="password"
-            placeholder="Password"
-            id="password"
-            className="w-full p-2 h-11"
-            onChange={handlePassword}
-          />
-        )}
-        {passwordError.status && (
-          <p className="text-red-500 text-sm mt-1">{passwordError.message}</p>
-        )}
-        <div className="flex items-center space-x-2 mt-2">
-          <Checkbox
-            id="terms"
-            className="border-white"
-            onCheckedChange={handleShowPassword}
-            checked={showPassword}
-          />
-          <label
-            htmlFor="terms"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 italic"
-          >
-            Show Password
-          </label>
+          {usernameError.status && (
+            <p className="text-red-500 text-sm mt-1">{usernameError.message}</p>
+          )}
         </div>
-      </div>
-      <Button
-        className="w-full mt-4 bg-white h-11 text-black hover:text-white font-semibold"
-        type="submit"
-      >
-        {isLoaded ? (
-          <RotatingLines
-            visible={true}
-            height="102"
-            width="102"
-            color="blue"
-            strokeWidth="5"
-            animationDuration="0.75"
-            ariaLabel="rotating-lines-loading"
-            wrapperStyle={{}}
-            wrapperClass=""
-          />
-        ) : (
-          "Login"
-        )}
-      </Button>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-        transition:Bounce
-      />
-    </form>
+        <div className="mb-4">
+          <label
+            htmlFor="password"
+            className="block text-left font-semibold text-white mb-2 italic"
+          >
+            Password
+          </label>
+          {showPassword ? (
+            <Input
+              type="text"
+              placeholder="Password"
+              id="password"
+              className="w-full p-2 h-11"
+              onChange={handlePassword}
+            />
+          ) : (
+            <Input
+              type="password"
+              placeholder="Password"
+              id="password"
+              className="w-full p-2 h-11"
+              onChange={handlePassword}
+            />
+          )}
+          {passwordError.status && (
+            <p className="text-red-500 text-sm mt-1">{passwordError.message}</p>
+          )}
+          <div className="flex items-center space-x-2 mt-2">
+            <Checkbox
+              id="terms"
+              className="border-white"
+              onCheckedChange={handleShowPassword}
+              checked={showPassword}
+            />
+            <label
+              htmlFor="terms"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 italic"
+            >
+              Show Password
+            </label>
+          </div>
+        </div>
+        <Button
+          className="w-full mt-4 bg-white h-11 text-black hover:text-white font-semibold"
+          type="submit"
+        >
+          {isLoaded ? (
+            <RotatingLines
+              visible={true}
+              height="102"
+              width="102"
+              color="blue"
+              strokeWidth="5"
+              animationDuration="0.75"
+              ariaLabel="rotating-lines-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            />
+          ) : (
+            "Login"
+          )}
+        </Button>
+      </form>
+      <ToastContainer />
+    </>
   );
 };
 export default LoginForm;

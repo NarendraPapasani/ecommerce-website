@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 const Login = () => {
   const navigate = useNavigate();
-  const jwt = Cookies.get("jwt");
+  const jwt = Cookies.get("jwt1");
   if (jwt) {
     navigate("/");
   }
