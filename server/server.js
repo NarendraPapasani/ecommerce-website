@@ -16,10 +16,13 @@ const connectDb = require("./DB/connectDb");
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://ecommified.netlify.app/", // Replace with your Netlify URL
     credentials: true,
   })
 );
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "../client/dist")));
 
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/products", require("./routes/productRoute"));
@@ -31,10 +34,8 @@ app.use(
 );
 app.use("/api/order", authenticateController, require("./routes/orderRoute"));
 
-app.get("/", (req, res) => {
-  res.send("Server is running");
-  res.sendFile(path.resolve(__dirname, "../client/index.html"));
-  console.log(path.resolve(__dirname, "../client/dist/index.html"));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
 });
 
 const PORT = process.env.PORT || 8000;
