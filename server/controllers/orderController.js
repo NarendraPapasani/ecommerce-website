@@ -56,7 +56,7 @@ const addOrder = async (req, res) => {
     });
 
     await orderDetails.save();
-    res.json({
+    res.status(200).json({
       status: "success",
       message: "Order placed successfully",
       order: orderDetails,

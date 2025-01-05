@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Carousel,
   CarouselContent,
@@ -5,9 +6,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
 import Autoplay from "embla-carousel-autoplay";
-import Products from "./products";
+import Products from "./Products";
 
 const carouselItems = [
   {
@@ -26,8 +26,8 @@ const carouselItems = [
 
 const Home = () => {
   return (
-    <>
-      <div className="p-12">
+    <div className="bg-zinc-950 min-h-screen w-full">
+      <div className="p-4 md:p-12">
         <Carousel
           plugins={[
             Autoplay({
@@ -35,27 +35,25 @@ const Home = () => {
             }),
           ]}
         >
-          <CarouselPrevious />
           <CarouselContent>
             {carouselItems.map((item, index) => (
               <CarouselItem key={index} className="flex justify-center">
                 <a href={item.link} rel="noopener noreferrer">
                   <img
                     src={item.src}
-                    className="md:rounded-full rounded-lg md:h-auto h-64"
+                    className="md:rounded-full rounded-lg md:h-auto h-52"
                     alt={`carousel-item-${index}`}
                   />
                 </a>
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselNext />
         </Carousel>
         <div>
           <Products />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

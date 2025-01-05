@@ -8,7 +8,7 @@ const CartSkeletons = ({ count }) => {
       {Array.from({ length: count }).map((_, index) => (
         <div
           key={index}
-          className="border border-white p-4 mb-4 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-100"
+          className="border border-white flex flex-col justify-center p-4 mb-4 -mr-24 md:-mr-0 rounded-lg bg-gray-800 hover:bg-gray-700 transition duration-300 ease-in-out transform hover:scale-100"
         >
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center mb-4 md:mb-0 cursor-pointer">

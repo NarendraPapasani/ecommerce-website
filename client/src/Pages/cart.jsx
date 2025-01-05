@@ -135,7 +135,7 @@ const Cart = () => {
   };
 
   return (
-    <div className="m-4 md:m-10 h-[90vh] overflow-y-hidden">
+    <div className="m-5 md:m-10 h-[90vh] overflow-y-hidden md:mb-0">
       <h1 className="text-2xl md:text-4xl text-white mb-5">Shopping Cart</h1>
       {loading ? (
         <div className="md:flex md:flex-row">
@@ -156,7 +156,7 @@ const Cart = () => {
           </button>
         </div>
       ) : (
-        <div className="flex flex-col md:flex-row h-full pb-10 md:pb-32">
+        <div className="flex flex-col md:flex-row h-full md:pb-32">
           <Scrollbars autoHide style={{ width: "100%", height: "100%" }}>
             <ul className="overflow-hidden">
               {cartList.map((each) => (
@@ -171,11 +171,11 @@ const Cart = () => {
               ))}
             </ul>
           </Scrollbars>
-          <div className="flex-shrink-0 mb-16 md:ml-4 mt-4 md:mt-0  md:w-1/3">
+          <div className="flex-shrink-0 mb-36 md:mb-0 md:ml-4 md:mt-0  md:w-1/3">
             {loading ? (
               <TotalPriceSkeleton /> // Show skeleton while loading
             ) : (
-              <div className="sticky top-0 bg-gray-800 p-4 rounded">
+              <div className="sticky top-0 bg-gray-900 p-4 rounded">
                 <div className="text-white flex flex-col items-end">
                   <div className="block md:hidden flex justify-between w-full">
                     <span className="text-lg md:text-xl text-green-500 font-bold ml-2">

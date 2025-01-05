@@ -43,7 +43,7 @@ const Orders = () => {
     <div className="m-4 md:m-10 h-[90vh] overflow-y-hidden">
       <div className="flex flex-col md:flex-row justify-around items-center md:flex-wrap">
         <h1 className="text-white text-3xl">Orders</h1>
-        <div className="relative w-1/2 m-10 flex items-center justify-center">
+        <div className="relative width-[95vw] m-10 md:w-1/2 flex items-center justify-center">
           <Input
             type="search"
             placeholder="Search here..."
@@ -70,11 +70,20 @@ const Orders = () => {
       </div>
       <div className="flex flex-col md:flex-row h-full pb-10 md:pb-32">
         <Scrollbars autoHide style={{ width: "100%", height: "100%" }}>
-          <ul className="flex flex-col md:flex-col justify-center items-center md:flex-wrap">
-            {filteredProducts.map((each) => (
-              <OrderItem each={each} key={each._id} />
-            ))}
-          </ul>
+          {filteredProducts.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full w-full">
+              <h2 className="text-white text-2xl">Orders are empty</h2>
+              <a href="/shop" className="text-blue-500 text-xl mt-4">
+                Shop Now
+              </a>
+            </div>
+          ) : (
+            <ul className="flex flex-col md:flex-col justify-center items-center md:flex-wrap">
+              {filteredProducts.map((each) => (
+                <OrderItem each={each} key={each._id} />
+              ))}
+            </ul>
+          )}
         </Scrollbars>
       </div>
     </div>

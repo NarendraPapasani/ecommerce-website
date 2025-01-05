@@ -11,6 +11,7 @@ import Login from "./Pages/login";
 import Cart from "./Pages/cart";
 import Home from "./Pages/home";
 import MyProfile from "./Pages/Profile";
+
 import Cookies from "js-cookie";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -94,8 +95,8 @@ const AppContent = () => {
     navigate("/addresses");
   };
   return (
-    <div className="app-container bg-zinc-950">
-      <div className="content">
+    <div className="app-container bg-zinc-950 min-h-screen w-full">
+      <div className="content flex-grow">
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Home />} />
@@ -256,12 +257,12 @@ const AppContent = () => {
               </MenubarContent>
             </MenubarMenu>
           </Menubar>
-          {jwt && (
+          {/* {jwt && (
             <Avatar className="ml-4 cursor-pointer">
               <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
-          )}
+          )} */}
         </div>
       </footer>
       <ToastContainer />

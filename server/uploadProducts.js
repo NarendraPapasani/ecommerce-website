@@ -6,7 +6,6 @@ const Product = require("./models/productModel"); // Adjust the path as necessar
 // Load environment variables from .env file
 require("dotenv").config();
 
-// Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -24,7 +23,7 @@ mongoose
 const uploadProducts = async () => {
   try {
     // Read the JSON file
-    const filePath = path.join(__dirname, "products.json"); // Adjust the path as necessary
+    const filePath = path.join(__dirname, "products.json");
     const productsData = fs.readFileSync(filePath, "utf-8");
     const products = JSON.parse(productsData);
 

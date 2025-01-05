@@ -41,7 +41,7 @@ const Products = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <div className="relative w-1/2 m-10">
+      <div className="relative md:w-1/2 width-[95vw] md:m-10 m-5">
         <Input
           type="search"
           placeholder="Search here..."

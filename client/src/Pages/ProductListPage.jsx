@@ -48,7 +48,7 @@ const ProductListPage = () => {
   return (
     <>
       <div className="flex flex-col items-center justify-center">
-        <div className="relative w-1/2 m-10">
+        <div className="relative width-[95vw] m-10">
           <Input
             type="search"
             placeholder="Search here..."

@@ -34,7 +34,7 @@ const AddAddressButtonComp = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const navigate = useNavigate();
-  const jwt = Cookies.get("jwt");
+  const jwt = Cookies.get("jwt1");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -45,12 +45,23 @@ const AddAddressButtonComp = () => {
   };
 
   const validateFields = () => {
-    return Object.values(address).every((field) => field !== "");
+    const newErrors = {};
+    Object.entries(address).forEach(([key, value]) => {
+      if (key === "mobileNumber" || key === "pincode") {
+        if (!/^\d+$/.test(value)) {
+          newErrors[key] = "This field should only contain numbers.";
+          toast.error(
+            `Error in ${key}: This field should only contain numbers.`
+          );
+        }
+      }
+    });
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleAddAddress = async () => {
     if (!validateFields()) {
-      toast.error("Please fill in all fields.");
+      toast.error("Please fill in all fields correctly.");
       return;
     }
 
@@ -74,6 +85,7 @@ const AddAddressButtonComp = () => {
     } catch (error) {
       console.log("client error", error);
       setLoading(false);
+      toast.error("Failed to save address. Please try again.");
     }
   };
 
@@ -111,19 +123,13 @@ const AddAddressButtonComp = () => {
           </div>
         </DialogTrigger>
         <DialogContent
-          className="sm:max-w-[425px] -mt-9"
+          className="sm:max-w-[425px] md:-mt-9 h-96 overflow-y-auto"
           style={{ fontFamily: "sans-serif" }}
         >
           <DialogHeader>
             <DialogTitle style={{ fontFamily: "sans-serif" }}>
               Add Address
             </DialogTitle>
-            <DialogDescription
-              className="text-black"
-              style={{ fontFamily: "sans-serif" }}
-            >
-              Fill in the details below to add a new address.
-            </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {[

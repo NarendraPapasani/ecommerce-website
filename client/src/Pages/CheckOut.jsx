@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import Cookies from "js-cookie";
 import { RotatingLines } from "react-loader-spinner";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   FaAddressCard,
   FaTag,
@@ -29,9 +32,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ComboboxDemo } from "@/components/comBox";
 import { useNavigate } from "react-router-dom";
-import { set } from "zod";
 
 const CheckOut = () => {
   const [addresses, setAddresses] = useState([]);
@@ -46,12 +47,10 @@ const CheckOut = () => {
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isPrivacyPolicyChecked, setIsPrivacyPolicyChecked] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loading1, setLoading1] = useState(false);
+  const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const navigate = useNavigate();
   const jwt = Cookies.get("jwt1");
-
-  const toggleAddressForm = () => {
-    setIsAddressFormVisible(!isAddressFormVisible);
-  };
 
   const toggleFormVisibility = () => {
     setIsFormVisible(!isFormVisible);
@@ -114,6 +113,7 @@ const CheckOut = () => {
 
   const handleProceed = async () => {
     try {
+      setLoading1(true);
       const data = {
         cartItems: cart.items,
         addressId: selectedAddress._id,
@@ -133,9 +133,25 @@ const CheckOut = () => {
           },
           withCredentials: true,
         });
+        toast.success("Order placed successfully");
+        setIsOrderPlaced(true);
+        setLoading1(false);
+        setTimeout(() => {
+          navigate("/orders");
+        }, 2500);
+      } else {
+        toast.error("Error placing order");
+        setLoading1(false);
+        isOrderPlaced(false);
+        setTimeout(() => {
+          navigate("/cart");
+        }, 2500);
       }
     } catch (error) {
       console.error("Error placing order:", error);
+      toast.error("Error placing order");
+      setLoading1(false);
+      isOrderPlaced(false);
     }
   };
 
@@ -145,7 +161,7 @@ const CheckOut = () => {
     !selectedAddress || !paymentMethod || !isPrivacyPolicyChecked;
 
   return (
-    <div className="flex flex-col md:flex-row p-8">
+    <div className="flex flex-col md:flex-row p-2 mb-20 md:mb-0">
       <div className="md:w-2/3 p-4">
         <div className="flex justify-between items-center mb-4">
           <Label htmlFor="addressDropdown" className="text-white">
@@ -171,6 +187,7 @@ const CheckOut = () => {
             {addresses.length !== 0 ? (
               <select
                 id="addressDropdown"
+                disabled={isOrderPlaced}
                 className="w-full p-2 border border-gray-300 rounded-md text-white bg-black"
                 placeholder="select an address"
                 onChange={(e) => handleAddressSelect(addresses[e.target.value])}
@@ -309,6 +326,7 @@ const CheckOut = () => {
                 paymentMethod === "cod" ? "bg-green-700" : "bg-gray-800"
               }`}
               onClick={() => setPaymentMethod("cod")}
+              disabled={isOrderPlaced}
             >
               <div className="flex items-center">
                 <FaMoneyBillWave className="text-white mr-2" />
@@ -320,6 +338,7 @@ const CheckOut = () => {
                 paymentMethod === "upi" ? "bg-green-700" : "bg-gray-800"
               }`}
               onClick={() => setPaymentMethod("upi")}
+              disabled={isOrderPlaced}
             >
               <div className="flex items-center">
                 <FaMobileAlt className="text-white mr-2" />
@@ -422,6 +441,7 @@ const CheckOut = () => {
           </AlertDialogContent>
         </AlertDialog>
       </div>
+      <ToastContainer />
     </div>
   );
 };

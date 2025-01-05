@@ -70,7 +70,7 @@ const LoginForm = () => {
   return (
     <>
       <form
-        className="rounded-md border border-input bg-transparent px-3 py-10"
+        className="rounded-md border border-input bg-transparent px-3 py-10 mb-24 md:mb-0"
         onSubmit={handleSubmit}
       >
         <div className="mb-4">

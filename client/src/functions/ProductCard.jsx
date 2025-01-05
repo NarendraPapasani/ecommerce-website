@@ -32,7 +32,7 @@ const ProductCard = (props) => {
   };
   return (
     <>
-      <li className="shadow-lg rounded-lg overflow-hidden h-96 w-96 m-5 transform transition duration-500 hover:scale-105 hover:bg-white relative group border border-white">
+      <li className="shadow-lg rounded-lg overflow-hidden h-96 md:w-96 width-[100vw] m-3 transform transition duration-500 hover:scale-105 hover:bg-white relative group border border-white">
         <img
           src={image}
           alt={title}

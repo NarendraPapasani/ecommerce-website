@@ -147,7 +147,7 @@ const AddressItem = (props) => {
                     </button>
                   </DialogTrigger>
                   <DialogContent
-                    className="sm:max-w-[425px] -mt-9"
+                    className="sm:max-w-[425px] -mt-9 h-96 overflow-y-auto"
                     style={{ fontFamily: "sans-serif" }}
                   >
                     <DialogHeader>
