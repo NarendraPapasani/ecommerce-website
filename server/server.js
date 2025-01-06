@@ -32,7 +32,7 @@ app.use(
 app.use("/api/order", authenticateController, require("./routes/orderRoute"));
 
 // Serve static files from the React app
-console.log(express.static(path.join(__dirname, "../client/dist")));
+console.log(path.join(__dirname, "../client/dist"));
 app.use(express.static(path.join(__dirname, "../client/dist")));
 
 // The "catchall" handler: for any request that doesn't match one above, send back index.html
