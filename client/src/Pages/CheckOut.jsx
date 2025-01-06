@@ -173,6 +173,24 @@ const CheckOut = () => {
   const isProceedDisabled =
     !selectedAddress || !paymentMethod || !isPrivacyPolicyChecked;
 
+  if (loading1) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <RotatingLines
+          visible={true}
+          height="100"
+          width="100"
+          color="blue"
+          strokeWidth="5"
+          animationDuration="0.75"
+          ariaLabel="rotating-lines-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col md:flex-row p-2 mb-20 md:mb-0">
       <div className="md:w-2/3 p-4">

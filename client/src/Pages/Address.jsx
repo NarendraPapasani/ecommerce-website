@@ -16,12 +16,15 @@ const Address = () => {
 
   const getAddress = async () => {
     try {
-      const resp = await axios.get("/api/address/all", {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        withCredentials: true,
-      });
+      const resp = await axios.get(
+        "https://ecommerce-website-crkh.onrender.com/api/address/all",
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+          withCredentials: true,
+        }
+      );
       const respData = resp.data;
       setAddressList(respData.address.addresses);
     } catch (error) {

@@ -45,12 +45,15 @@ const Cart = () => {
 
   const getCartItems = async () => {
     try {
-      const resp = await axios.get("/api/cart/all", {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        withCredentials: true,
-      });
+      const resp = await axios.get(
+        "https://ecommerce-website-crkh.onrender.com/api/cart/all",
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+          withCredentials: true,
+        }
+      );
       const respData = resp.data.data.cart;
       setCartList(respData.items);
       calculateTotalPrice(respData.totalPrice);
@@ -72,7 +75,7 @@ const Cart = () => {
     try {
       setLoading1(true);
       const resp = await axios.put(
-        `/api/cart/increment/${_id}`,
+        `https://ecommerce-website-crkh.onrender.com/api/cart/increment/${_id}`,
         {},
         {
           headers: {
@@ -93,7 +96,7 @@ const Cart = () => {
     try {
       setLoading1(true);
       const resp = await axios.put(
-        `/api/cart/decrement/${_id}`,
+        `https://ecommerce-website-crkh.onrender.com/api/cart/decrement/${_id}`,
         {},
         {
           headers: {
@@ -113,12 +116,15 @@ const Cart = () => {
 
   const deleteItem = async (_id) => {
     try {
-      const resp = await axios.delete(`/api/cart/remove/${_id}`, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        withCredentials: true,
-      });
+      const resp = await axios.delete(
+        `https://ecommerce-website-crkh.onrender.com/api/cart/remove/${_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+          withCredentials: true,
+        }
+      );
       toast("Item deleted", {
         type: "info",
         style: { backgroundColor: "orange", color: "white" },
