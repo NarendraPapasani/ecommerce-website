@@ -16,7 +16,7 @@ const connectDb = require("./DB/connectDb");
 
 app.use(
   cors({
-    origin: "https://ecommified.netlify.app/",
+    origin: "https://ecommified.netlify.app",
     credentials: true,
   })
 );
@@ -31,12 +31,20 @@ app.use(
 );
 app.use("/api/order", authenticateController, require("./routes/orderRoute"));
 
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "../client/dist")));
+
+// The "catchall" handler: for any request that doesn't match one above, send back index.html
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../client/dist/index.html"));
+});
+
 const PORT = process.env.PORT || 5000;
 
 connectDb()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`Server is running on port 8000`);
+      console.log(`Server is running on port ${PORT}`);
     });
   })
   .catch((error) => {
