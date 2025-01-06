@@ -16,7 +16,7 @@ const connectDb = require("./DB/connectDb");
 
 app.use(
   cors({
-    origin: "https://ecommified.netlify.app/",
+    origin: "https://ecommified.netlify.app",
     credentials: true,
   })
 );
