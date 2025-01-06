@@ -81,7 +81,7 @@ const AddressItem = (props) => {
     }
     try {
       const response = await axios.put(
-        `/api/address/update/${each.addressId}`,
+        `https://ecommerce-website-crkh.onrender.com/api/address/update/${each.addressId}`,
         address,
         {
           headers: {
@@ -106,7 +106,7 @@ const AddressItem = (props) => {
   const handleDelete = async () => {
     try {
       const response = await axios.delete(
-        `/api/address/delete/${each.addressId}`,
+        `https://ecommerce-website-crkh.onrender.com/api/address/delete/${each.addressId}`,
         {
           headers: {
             Authorization: `Bearer ${jwt}`,

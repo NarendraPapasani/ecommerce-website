@@ -15,12 +15,15 @@ const Orders = () => {
 
   const getOrders = async () => {
     try {
-      const resp = await axios.get("/api/order/user", {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        withCredentials: true,
-      });
+      const resp = await axios.get(
+        "https://ecommerce-website-crkh.onrender.com/api/order/user",
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+          withCredentials: true,
+        }
+      );
       const sortedOrders = resp.data.data.orders[0].orders.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );

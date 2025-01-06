@@ -59,12 +59,15 @@ const CheckOut = () => {
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
-        const response = await axios.get("/api/address/all", {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          "https://ecommerce-website-crkh.onrender.com/api/address/all",
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+            withCredentials: true,
+          }
+        );
         setAddresses(response.data.address.addresses);
         setLoading(false);
       } catch (error) {
@@ -75,12 +78,15 @@ const CheckOut = () => {
 
     const fetchCartTotal = async () => {
       try {
-        const response = await axios.get("/api/cart/all", {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-          },
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          "https://ecommerce-website-crkh.onrender.com/api/cart/all",
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+            withCredentials: true,
+          }
+        );
         setCart(response.data.data.cart);
         setCartTotal(response.data.data.cart.totalPrice);
       } catch (error) {
@@ -120,19 +126,26 @@ const CheckOut = () => {
         totalPrice: totalAfterDiscount,
         paymentMethod,
       };
-      const resp = await axios.post("/api/order/add", data, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        withCredentials: true,
-      });
-      if (resp.status === 200) {
-        const response = await axios.delete("/api/cart/clear", {
+      const resp = await axios.post(
+        "https://ecommerce-website-crkh.onrender.com/api/order/add",
+        data,
+        {
           headers: {
             Authorization: `Bearer ${jwt}`,
           },
           withCredentials: true,
-        });
+        }
+      );
+      if (resp.status === 200) {
+        const response = await axios.delete(
+          "https://ecommerce-website-crkh.onrender.com/api/cart/clear",
+          {
+            headers: {
+              Authorization: `Bearer ${jwt}`,
+            },
+            withCredentials: true,
+          }
+        );
         toast.success("Order placed successfully");
         setIsOrderPlaced(true);
         setLoading1(false);

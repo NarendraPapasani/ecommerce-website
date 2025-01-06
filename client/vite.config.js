@@ -10,14 +10,14 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  server: {
-    proxy: {
-      "/api": {
-        target: "https://ecommerce-website-crkh.onrender.com",
-        changeOrigin: true,
-      },
-    },
-  },
+  // server: {
+  //   proxy: {
+  //     "/api": {
+  //       target: "https://ecommerce-website-crkh.onrender.com",
+  //       changeOrigin: true,
+  //     },
+  //   },
+  // },
   build: {
     outDir: "dist", // Ensure the output directory is set to "dist"
     rollupOptions: {

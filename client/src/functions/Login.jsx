@@ -47,10 +47,13 @@ const LoginForm = () => {
     }
     if (username && password) {
       try {
-        const response = await axios.post("/api/auth/login", {
-          email: username,
-          password,
-        });
+        const response = await axios.post(
+          "https://ecommerce-website-crkh.onrender.com/api/auth/login",
+          {
+            email: username,
+            password,
+          }
+        );
         if (response.status === 200) {
           setIsLoaded(false);
           const token = response.data.token;

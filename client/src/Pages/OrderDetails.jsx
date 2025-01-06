@@ -23,12 +23,15 @@ const OrderDetails = () => {
 
   const getAddress = async (addressId) => {
     try {
-      const response = await axios.get(`/api/address/${addressId}`, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `https://ecommerce-website-crkh.onrender.com/api/address/${addressId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+          withCredentials: true,
+        }
+      );
       setAddress(response.data.address[0]);
     } catch (error) {
       console.log(error);
@@ -37,12 +40,15 @@ const OrderDetails = () => {
 
   const fetchOrderDetails = async () => {
     try {
-      const response = await axios.get(`/api/order/${id}`, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `https://ecommerce-website-crkh.onrender.com/api/order/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+          withCredentials: true,
+        }
+      );
       setOrderDetails(response.data.data.order);
       getAddress(response.data.data.order.addressId);
     } catch (error) {
