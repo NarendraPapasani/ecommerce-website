@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import OrderItem from "@/functions/OrderItem";
+import OrderItemSkeleton from "@/components/skeletons/OrderItemSkeleton";
 import { Input } from "@/components/ui/input";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import Cookies from "js-cookie";
@@ -8,10 +9,12 @@ import Cookies from "js-cookie";
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const jwt = Cookies.get("jwt1");
+
   useEffect(() => {
     getOrders();
   }, []);
-  const jwt = Cookies.get("jwt1");
 
   const getOrders = async () => {
     try {
@@ -31,6 +34,8 @@ const Orders = () => {
       setFilteredProducts(sortedOrders);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,7 +78,13 @@ const Orders = () => {
       </div>
       <div className="flex flex-col md:flex-row h-full pb-10 md:pb-32">
         <Scrollbars autoHide style={{ width: "100%", height: "100%" }}>
-          {filteredProducts.length === 0 ? (
+          {loading ? (
+            <ul className="flex flex-col md:flex-col justify-center items-center md:flex-wrap">
+              {[...Array(3)].map((_, index) => (
+                <OrderItemSkeleton key={index} />
+              ))}
+            </ul>
+          ) : filteredProducts.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full w-full">
               <h2 className="text-white text-2xl">Orders are empty</h2>
               <a href="/shop" className="text-blue-500 text-xl mt-4">

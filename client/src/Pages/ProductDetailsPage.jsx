@@ -5,11 +5,13 @@ import { toast, ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
 import "react-toastify/dist/ReactToastify.css";
 import { FaPlus, FaMinus } from "react-icons/fa";
+import ProductDetailsPageSkeleton from "@/components/skeletons/ProductDetailsPageSkeleton";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
   const [productDetails, setProductDetails] = useState({});
   const [quantity, setQuantity] = useState(1);
+  const [loading, setLoading] = useState(true);
   const jwt = Cookies.get("jwt1");
 
   useEffect(() => {
@@ -21,6 +23,8 @@ const ProductDetailsPage = () => {
         setProductDetails(response.data.product);
       } catch (error) {
         console.error("Error fetching product details:", error.message);
+      } finally {
+        setLoading(false);
       }
     };
     getProductDetails();
@@ -52,6 +56,10 @@ const ProductDetailsPage = () => {
     );
     toast.success("Added to cart");
   };
+
+  if (loading) {
+    return <ProductDetailsPageSkeleton />;
+  }
 
   return (
     <>

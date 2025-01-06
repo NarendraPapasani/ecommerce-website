@@ -10,16 +10,16 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // server: {
-  //   proxy: {
-  //     "/api": {
-  //       target: "https://ecommerce-website-crkh.onrender.com",
-  //       changeOrigin: true,
-  //     },
-  //   },
-  // },
+  server: {
+    proxy: {
+      "https://ecommerce-website-crkh.onrender.com/api": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+      },
+    },
+  },
   build: {
-    outDir: "dist", // Ensure the output directory is set to "dist"
+    outDir: "dist",
     rollupOptions: {
       output: {
         manualChunks: undefined,

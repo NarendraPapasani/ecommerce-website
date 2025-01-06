@@ -135,4 +135,44 @@ const getOrderById = async (req, res) => {
   }
 };
 
-module.exports = { addOrder, getAllOrders, getUserOrders, getOrderById };
+const cancelOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email } = req.user;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        status: "error",
+        message: `Invalid order ID format`,
+      });
+    }
+    const orderDetails = await Order.findOne({ email, "orders._id": id });
+    if (!orderDetails) {
+      return res.status(404).json({
+        status: "error",
+        message: `Order with ID ${id} not found`,
+      });
+    }
+    const order = orderDetails.orders[0];
+    if (order.orderStatus === "Cancelled") {
+      return res.status(400).json({
+        status: "error",
+        message: `Order with ID ${id} is already cancelled`,
+      });
+    }
+    order.orderStatus = "Cancelled";
+    await orderDetails.save();
+  } catch (error) {
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
+};
+
+module.exports = {
+  addOrder,
+  getAllOrders,
+  getUserOrders,
+  getOrderById,
+  cancelOrder,
+};

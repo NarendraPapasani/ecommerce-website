@@ -32,9 +32,12 @@ export function ComboboxDemo() {
 
   const getAddress = async () => {
     try {
-      const response = await axios.get("/api/address/all", {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        "https://ecommerce-website-crkh.onrender.com/api/address/all",
+        {
+          withCredentials: true,
+        }
+      );
       const frameworks = response.data.address.addresses.map((address) => ({
         label: address.fullName + "-" + address.area,
         value: address.addressId,

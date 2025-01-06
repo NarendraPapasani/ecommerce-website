@@ -10,10 +10,13 @@ import {
 } from "react-icons/fa";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import Cookies from "js-cookie";
-
+import OrderDetailsSkeleton from "@/components/skeletons/OrderDetailsSkeleton";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const OrderDetails = () => {
   const [orderDetails, setOrderDetails] = useState({});
   const [address, setAddress] = useState({});
+  const [loading, setLoading] = useState(true);
   const { id } = useParams();
   const jwt = Cookies.get("jwt1");
 
@@ -53,8 +56,33 @@ const OrderDetails = () => {
       getAddress(response.data.data.order.addressId);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const cancelOrder = async () => {
+    try {
+      const resp = await axios.delete(
+        `https://ecommerce-website-crkh.onrender.com/api/order/cancel/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+          withCredentials: true,
+        }
+      );
+      console.log(resp);
+      toast.success("Order cancelled successfully");
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to cancel order");
+    }
+  };
+
+  if (loading) {
+    return <OrderDetailsSkeleton />;
+  }
 
   return (
     <div className="text-white min-h-screen p-4 md:p-8 flex flex-col justify-center items-center">
@@ -104,6 +132,12 @@ const OrderDetails = () => {
                 {new Date(orderDetails.createdAt).toLocaleString()}
               </span>
             </p>
+            <button
+              onClick={cancelOrder}
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4 md:mt-0 w-full md:w-auto"
+            >
+              Cancel Order
+            </button>
           </div>
         </div>
         <div className="p-4 md:p-6 rounded-lg shadow-lg bg-gray-800 mt-5 flex-1">
@@ -142,6 +176,7 @@ const OrderDetails = () => {
           </Scrollbars>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
