@@ -74,7 +74,7 @@ const AddressItem = (props) => {
     return Object.values(address).every((field) => field !== "");
   };
 
-  const handleUpdateAddress = async () => {
+  const handleUpdateAddress = async (addressId) => {
     if (!validateFields()) {
       toast.error("Please fill in all fields.");
       return;
@@ -103,7 +103,7 @@ const AddressItem = (props) => {
 
   const cancelButt = () => {};
 
-  const handleDelete = async () => {
+  const handleDelete = async (addressId) => {
     try {
       const response = await axios.delete(
         `https://ecommerce-website-crkh.onrender.com/api/address/delete/${addressId}`,
@@ -144,7 +144,7 @@ const AddressItem = (props) => {
                   <DialogTrigger asChild>
                     <button
                       className="text-xs text-blue-500 mr-2"
-                      onClick={handleUpdateAddress}
+                      onClick={handleUpdateAddress(addressId)}
                     >
                       <FaEdit />
                     </button>
@@ -246,7 +246,7 @@ const AddressItem = (props) => {
                 <AlertDialogTrigger className="w-full text-lg sm:text-xl md:text-2xl lg:text-xl">
                   <button
                     className="text-xs text-red-500"
-                    onClick={handleDelete}
+                    onClick={handleDelete(addressId)}
                   >
                     <FaTrash />
                   </button>
