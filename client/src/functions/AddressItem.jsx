@@ -134,7 +134,7 @@ const AddressItem = (props) => {
               <span className="text-xs text-white leading-4">Default:</span>
               {defaultAddress && (
                 <span className="text-xs text-yellow-500 leading-4 ml-2 flex items-center">
-                  <FaStar className="mr-1" /> Primary Addresses
+                  <FaStar className="mr-1" /> Primary Address
                 </span>
               )}
             </div>
