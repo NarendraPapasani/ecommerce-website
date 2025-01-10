@@ -81,7 +81,7 @@ const AddressItem = (props) => {
     }
     try {
       const response = await axios.put(
-        `https://ecommerce-website-crkh.onrender.com/api/address/update/${each.addressId}`,
+        `https://ecommerce-website-crkh.onrender.com/api/address/update/${addressId}`,
         address,
         {
           headers: {
@@ -106,7 +106,7 @@ const AddressItem = (props) => {
   const handleDelete = async () => {
     try {
       const response = await axios.delete(
-        `https://ecommerce-website-crkh.onrender.com/api/address/delete/${each.addressId}`,
+        `https://ecommerce-website-crkh.onrender.com/api/address/delete/${addressId}`,
         {
           headers: {
             Authorization: `Bearer ${jwt}`,
@@ -142,7 +142,10 @@ const AddressItem = (props) => {
               <>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <button className="text-xs text-blue-500 mr-2">
+                    <button
+                      className="text-xs text-blue-500 mr-2"
+                      onClick={handleUpdateAddress}
+                    >
                       <FaEdit />
                     </button>
                   </DialogTrigger>
@@ -241,7 +244,10 @@ const AddressItem = (props) => {
               </>
               <AlertDialog>
                 <AlertDialogTrigger className="w-full text-lg sm:text-xl md:text-2xl lg:text-xl">
-                  <button className="text-xs text-red-500">
+                  <button
+                    className="text-xs text-red-500"
+                    onClick={handleDelete}
+                  >
                     <FaTrash />
                   </button>
                 </AlertDialogTrigger>
