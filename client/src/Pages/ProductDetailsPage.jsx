@@ -34,7 +34,26 @@ const ProductDetailsPage = () => {
     setQuantity((prevQuantity) => Math.max(1, prevQuantity + amount));
   };
 
-  const clickBuyNow = () => {};
+  const clickBuyNow = () => {
+    if (!jwt) {
+      toast.error("Please login to buy now");
+    }
+    const cartItem = {
+      productId: productDetails._id,
+      quantity: quantity,
+    };
+    axios.post(
+      "https://ecommerce-website-crkh.onrender.com/api/cart/add",
+      cartItem,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+        withCredentials: true,
+      }
+    );
+    window.location.href = "/cart";
+  };
 
   const addToWishList = async () => {
     if (!jwt) {
