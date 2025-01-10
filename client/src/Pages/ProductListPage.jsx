@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 const ProductListPage = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -20,6 +20,7 @@ const ProductListPage = () => {
 
   const fetchProductsByCategory = async (category) => {
     try {
+      setLoading(true);
       const response = await axios.get(
         `https://ecommerce-website-crkh.onrender.com/api/products?category=${category}`
       );
