@@ -10,7 +10,19 @@
   NODE_VERSION = "18"
 
 [[redirects]]
-  # Redirect all routes to index.html for client-side routing
+  # Handle static assets first (higher priority)
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+[[redirects]]
+  # Handle API calls (if needed)
+  from = "/api/*"
+  to = "https://ecommerce-website-crkh.onrender.com/api/:splat"
+  status = 200
+
+[[redirects]]
+  # Redirect all other routes to index.html for client-side routing
   from = "/*"
   to = "/index.html"
   status = 200
