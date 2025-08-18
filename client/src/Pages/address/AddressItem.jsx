@@ -115,7 +115,7 @@ const AddressItem = (props) => {
         description: "Please fill in all required fields.",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
+        
       });
       return;
     }
@@ -139,7 +139,7 @@ const AddressItem = (props) => {
           description: "Address updated successfully",
           variant: "default",
           className: "bg-green-600 border-green-600 text-white",
-          duration: 2000,
+          
         });
         setIsEditOpen(false);
         if (onUpdate) onUpdate();
@@ -151,7 +151,7 @@ const AddressItem = (props) => {
         description: "Failed to update address",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
+        
       });
     } finally {
       setIsLoading(false);
@@ -177,7 +177,7 @@ const AddressItem = (props) => {
           description: "Address deleted successfully",
           variant: "default",
           className: "bg-green-600 border-green-600 text-white",
-          duration: 2000,
+          
         });
         setIsDeleteOpen(false);
         if (onUpdate) onUpdate();
@@ -189,7 +189,7 @@ const AddressItem = (props) => {
         description: "Failed to delete address",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
+        
       });
     } finally {
       setIsLoading(false);

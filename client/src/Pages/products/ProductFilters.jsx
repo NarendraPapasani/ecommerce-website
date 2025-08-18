@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import {
   Sheet,
@@ -20,6 +19,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import PriceRangeFilter from "./PriceRangeFilter";
 
 const ProductFilters = ({
   filters,
@@ -138,28 +138,15 @@ const ProductFilters = ({
 
   const FilterContent = () => (
     <div className="space-y-6">
-      {/* Price Range Filter */}
-      <Card className="border-zinc-800 bg-zinc-900/50">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium text-white">
-            Price Range
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Slider
-            value={localPriceRange}
-            onValueChange={handlePriceChange}
-            max={100}
-            min={0}
-            step={10}
-            className="w-full"
-          />
-          <div className="flex items-center justify-between text-xs text-zinc-400">
-            <span>₹{localPriceRange[0]}</span>
-            <span>₹{localPriceRange[1]}</span>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Enhanced Price Range Filter */}
+      <PriceRangeFilter
+        value={localPriceRange}
+        onChange={handlePriceChange}
+        min={priceRange.minPrice || 0}
+        max={priceRange.maxPrice || 100}
+        step={5}
+        className="border-zinc-800 bg-zinc-900/50"
+      />
 
       {/* Category Filter */}
       <Card className="border-zinc-800 bg-zinc-900/50">

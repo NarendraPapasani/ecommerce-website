@@ -106,7 +106,7 @@ const HeroSection = () => {
           </div>
 
           {/* Right Content - Quote Cards */}
-          <div className="space-y-6">
+          <div className="space-y-6 hidden md:block">
             {quotes.map((quote, index) => (
               <Card
                 key={index}
@@ -133,6 +133,16 @@ const HeroSection = () => {
                 </CardContent>
               </Card>
             ))}
+          </div>
+
+          {/* Mobile Center Text */}
+          <div className="md:hidden text-center space-y-4">
+            <h2 className="text-2xl font-bold text-white font-['Montserrat']">
+              Experience shopping like never before
+            </h2>
+            <p className="text-zinc-400 font-['Montserrat']">
+              Your Favorite Products, Just a Blink Away
+            </p>
           </div>
         </div>
 

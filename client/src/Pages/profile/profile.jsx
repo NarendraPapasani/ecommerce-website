@@ -108,6 +108,9 @@ const OldProfile = () => {
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
+    showCurrentPassword: false,
+    showNewPassword: false,
+    showConfirmPassword: false,
   });
 
   const [emailData, setEmailData] = useState({
@@ -310,6 +313,9 @@ const OldProfile = () => {
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
+        showCurrentPassword: false,
+        showNewPassword: false,
+        showConfirmPassword: false,
       });
       setShowPasswordDialog(false);
     } catch (error) {
@@ -611,34 +617,38 @@ const OldProfile = () => {
 
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-slate-800/50 border-slate-700 mb-8">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 bg-slate-800/50 border-slate-700 mb-8 h-auto p-1 gap-1">
             <TabsTrigger
               value="profile"
-              className="data-[state=active]:bg-blue-600"
+              className="data-[state=active]:bg-blue-600 text-xs lg:text-sm py-2 lg:py-3 px-2 lg:px-4 h-auto"
             >
-              <User className="h-4 w-4 mr-2" />
-              Profile
+              <User className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
+              <span className="hidden sm:inline">Profile</span>
+              <span className="sm:hidden">Info</span>
             </TabsTrigger>
             <TabsTrigger
               value="security"
-              className="data-[state=active]:bg-green-600"
+              className="data-[state=active]:bg-green-600 text-xs lg:text-sm py-2 lg:py-3 px-2 lg:px-4 h-auto"
             >
-              <Shield className="h-4 w-4 mr-2" />
-              Security
+              <Shield className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
+              <span className="hidden sm:inline">Security</span>
+              <span className="sm:hidden">Sec</span>
             </TabsTrigger>
             <TabsTrigger
               value="preferences"
-              className="data-[state=active]:bg-purple-600"
+              className="data-[state=active]:bg-purple-600 text-xs lg:text-sm py-2 lg:py-3 px-2 lg:px-4 h-auto"
             >
-              <Settings className="h-4 w-4 mr-2" />
-              Preferences
+              <Settings className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
+              <span className="hidden sm:inline">Preferences</span>
+              <span className="sm:hidden">Prefs</span>
             </TabsTrigger>
             <TabsTrigger
               value="danger"
-              className="data-[state=active]:bg-red-600"
+              className="data-[state=active]:bg-red-600 text-xs lg:text-sm py-2 lg:py-3 px-2 lg:px-4 h-auto"
             >
-              <AlertTriangle className="h-4 w-4 mr-2" />
-              Danger Zone
+              <AlertTriangle className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
+              <span className="hidden sm:inline">Danger Zone</span>
+              <span className="sm:hidden">Danger</span>
             </TabsTrigger>
           </TabsList>
 
@@ -1031,18 +1041,43 @@ const OldProfile = () => {
                             >
                               Current Password
                             </Label>
-                            <Input
-                              id="currentPassword"
-                              type="password"
-                              value={passwordData.currentPassword}
-                              onChange={(e) =>
-                                setPasswordData({
-                                  ...passwordData,
-                                  currentPassword: e.target.value,
-                                })
-                              }
-                              className="bg-slate-700 border-slate-600 text-white"
-                            />
+                            <div className="relative">
+                              <Input
+                                id="currentPassword"
+                                type={
+                                  passwordData.showCurrentPassword
+                                    ? "text"
+                                    : "password"
+                                }
+                                value={passwordData.currentPassword}
+                                onChange={(e) =>
+                                  setPasswordData({
+                                    ...passwordData,
+                                    currentPassword: e.target.value,
+                                  })
+                                }
+                                className="bg-slate-700 border-slate-600 text-white pr-10"
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="absolute right-0 top-0 h-full px-3 text-slate-400 hover:text-white"
+                                onClick={() =>
+                                  setPasswordData({
+                                    ...passwordData,
+                                    showCurrentPassword:
+                                      !passwordData.showCurrentPassword,
+                                  })
+                                }
+                              >
+                                {passwordData.showCurrentPassword ? (
+                                  <EyeOff className="w-4 h-4" />
+                                ) : (
+                                  <Eye className="w-4 h-4" />
+                                )}
+                              </Button>
+                            </div>
                           </div>
                           <div>
                             <Label
@@ -1051,18 +1086,43 @@ const OldProfile = () => {
                             >
                               New Password
                             </Label>
-                            <Input
-                              id="newPassword"
-                              type="password"
-                              value={passwordData.newPassword}
-                              onChange={(e) =>
-                                setPasswordData({
-                                  ...passwordData,
-                                  newPassword: e.target.value,
-                                })
-                              }
-                              className="bg-slate-700 border-slate-600 text-white"
-                            />
+                            <div className="relative">
+                              <Input
+                                id="newPassword"
+                                type={
+                                  passwordData.showNewPassword
+                                    ? "text"
+                                    : "password"
+                                }
+                                value={passwordData.newPassword}
+                                onChange={(e) =>
+                                  setPasswordData({
+                                    ...passwordData,
+                                    newPassword: e.target.value,
+                                  })
+                                }
+                                className="bg-slate-700 border-slate-600 text-white pr-10"
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="absolute right-0 top-0 h-full px-3 text-slate-400 hover:text-white"
+                                onClick={() =>
+                                  setPasswordData({
+                                    ...passwordData,
+                                    showNewPassword:
+                                      !passwordData.showNewPassword,
+                                  })
+                                }
+                              >
+                                {passwordData.showNewPassword ? (
+                                  <EyeOff className="w-4 h-4" />
+                                ) : (
+                                  <Eye className="w-4 h-4" />
+                                )}
+                              </Button>
+                            </div>
                           </div>
                           <div>
                             <Label
@@ -1071,18 +1131,43 @@ const OldProfile = () => {
                             >
                               Confirm New Password
                             </Label>
-                            <Input
-                              id="confirmPassword"
-                              type="password"
-                              value={passwordData.confirmPassword}
-                              onChange={(e) =>
-                                setPasswordData({
-                                  ...passwordData,
-                                  confirmPassword: e.target.value,
-                                })
-                              }
-                              className="bg-slate-700 border-slate-600 text-white"
-                            />
+                            <div className="relative">
+                              <Input
+                                id="confirmPassword"
+                                type={
+                                  passwordData.showConfirmPassword
+                                    ? "text"
+                                    : "password"
+                                }
+                                value={passwordData.confirmPassword}
+                                onChange={(e) =>
+                                  setPasswordData({
+                                    ...passwordData,
+                                    confirmPassword: e.target.value,
+                                  })
+                                }
+                                className="bg-slate-700 border-slate-600 text-white pr-10"
+                              />
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="absolute right-0 top-0 h-full px-3 text-slate-400 hover:text-white"
+                                onClick={() =>
+                                  setPasswordData({
+                                    ...passwordData,
+                                    showConfirmPassword:
+                                      !passwordData.showConfirmPassword,
+                                  })
+                                }
+                              >
+                                {passwordData.showConfirmPassword ? (
+                                  <EyeOff className="w-4 h-4" />
+                                ) : (
+                                  <Eye className="w-4 h-4" />
+                                )}
+                              </Button>
+                            </div>
                           </div>
                         </div>
                         <DialogFooter>

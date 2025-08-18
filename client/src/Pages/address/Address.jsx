@@ -39,7 +39,6 @@ const Address = () => {
         description: "Failed to fetch addresses",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
       });
     } finally {
       setIsLoading(false);
@@ -52,11 +51,11 @@ const Address = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl relative z-10">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
-            <div className="p-2 rounded-lg bg-blue-600/20 border border-blue-600/30">
+          <div className="flex items-start sm:items-center gap-3 mb-4">
+            <div className="p-2 rounded-lg bg-blue-600/20 border border-blue-600/30 flex-shrink-0">
               <MapPin className="h-5 w-5 text-blue-400" />
             </div>
-            <div>
+            <div className="flex-1 min-w-0">
               <h1 className="text-xl sm:text-2xl font-semibold text-white">
                 Manage Addresses
               </h1>

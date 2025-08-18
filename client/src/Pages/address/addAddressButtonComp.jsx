@@ -73,7 +73,6 @@ const AddAddressButtonComp = ({ onAddressAdded }) => {
         description: "Please fill in all required fields.",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
       });
       return false;
     }
@@ -85,7 +84,6 @@ const AddAddressButtonComp = ({ onAddressAdded }) => {
         description: "Mobile number should be 10 digits.",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
       });
       return false;
     }
@@ -97,7 +95,6 @@ const AddAddressButtonComp = ({ onAddressAdded }) => {
         description: "Pincode should be 6 digits.",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
       });
       return false;
     }
@@ -128,7 +125,6 @@ const AddAddressButtonComp = ({ onAddressAdded }) => {
           description: "Address added successfully.",
           variant: "default",
           className: "bg-green-600 border-green-600 text-white",
-          duration: 2000,
         });
         setAddress({
           fullName: "",
@@ -155,7 +151,6 @@ const AddAddressButtonComp = ({ onAddressAdded }) => {
           description: errorData.message || "Failed to save address.",
           variant: "destructive",
           className: "bg-red-600 border-red-600 text-white",
-          duration: 2000,
         });
       }
     } catch (error) {
@@ -164,7 +159,6 @@ const AddAddressButtonComp = ({ onAddressAdded }) => {
         description: "Network error. Please try again.",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
       });
     } finally {
       setLoading(false);
@@ -174,12 +168,12 @@ const AddAddressButtonComp = ({ onAddressAdded }) => {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Card className="border-2 border-dashed border-slate-600/50 hover:border-blue-400/50 transition-colors cursor-pointer group bg-slate-800/30">
-          <CardContent className="flex flex-col items-center justify-center p-8 min-h-[200px]">
+        <Card className="border-2 border-dashed border-slate-600/50 hover:border-blue-400/50 transition-colors cursor-pointer group bg-slate-800/30 w-full sm:w-auto">
+          <CardContent className="flex flex-col items-center justify-center p-6 sm:p-8 min-h-[180px] sm:min-h-[200px]">
             <div className="flex items-center justify-center w-16 h-16 rounded-full bg-blue-600/20 group-hover:bg-blue-600/30 transition-colors mb-4 border border-blue-600/30">
               <Plus className="h-8 w-8 text-blue-400" />
             </div>
-            <h3 className="text-lg text-white font-semibold mb-2">
+            <h3 className="text-lg text-white font-semibold mb-2 text-center">
               Add New Address
             </h3>
             <p className="text-sm text-slate-400 text-center">

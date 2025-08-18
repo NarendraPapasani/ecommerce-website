@@ -4,6 +4,11 @@ module.exports = {
   content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
     extend: {
+      screens: {
+        mobile: { max: "640px" },
+        tablet: { min: "641px", max: "1024px" },
+        desktop: { min: "1025px" },
+      },
       fontFamily: {
         sans: ["Montserrat", "system-ui", "-apple-system", "sans-serif"],
       },

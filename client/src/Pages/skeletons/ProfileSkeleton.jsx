@@ -16,7 +16,6 @@ const ProfileSkeleton = () => {
               {/* Avatar Section */}
               <div className="relative">
                 <div className="w-32 h-32 lg:w-40 lg:h-40 bg-slate-600 rounded-full border-4 border-slate-600"></div>
-                <div className="absolute bottom-0 right-0 w-10 h-10 bg-slate-600 rounded-full"></div>
               </div>
 
               {/* User Info */}

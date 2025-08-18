@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,6 @@ const OrderItem = (props) => {
     _id,
     paymentMethod,
   } = each;
-  const navigate = useNavigate();
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
@@ -112,7 +111,7 @@ const OrderItem = (props) => {
   const formatted = formatDate(createdAt);
 
   return (
-    <Card className="bg-slate-800/50 border-slate-700/50 hover:border-slate-600/70 transition-all duration-200">
+    <Card className="bg-slate-800/50 border-slate-700/50 hover:border-slate-600/70 transition-all duration-200 relative z-20">
       <CardHeader className="pb-3">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
           <div className="flex items-center gap-3">
@@ -121,7 +120,7 @@ const OrderItem = (props) => {
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-white font-semibold text-sm">
+                <h3 className="text-white font-semibold text-sm select-text">
                   #{_id.slice(-8).toUpperCase()}
                 </h3>
                 <Badge
@@ -130,14 +129,14 @@ const OrderItem = (props) => {
                   size="sm"
                 >
                   {getStatusIcon(orderStatus)}
-                  <span className="ml-1 text-xs font-medium">
+                  <span className="ml-1 text-xs font-medium select-text">
                     {orderStatus}
                   </span>
                 </Badge>
               </div>
               <div className="flex items-center gap-2 text-slate-400">
                 <Calendar className="h-3 w-3" />
-                <span className="text-xs">
+                <span className="text-xs select-text">
                   {formatted.date} at {formatted.time}
                 </span>
               </div>
@@ -146,19 +145,30 @@ const OrderItem = (props) => {
 
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <p className="text-xl font-bold text-white">
+              <p className="text-xl font-bold text-white select-text">
                 ₹{totalPrice.toFixed(2)}
               </p>
-              <p className="text-slate-400 text-xs">{cartItems.length} items</p>
+              <p className="text-slate-400 text-xs select-text">
+                {cartItems.length} items
+              </p>
             </div>
-            <Button
-              onClick={() => navigate(`/order/${_id}`)}
-              size="sm"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2"
+            <Link
+              to={`/order/${_id}`}
+              className="inline-block relative z-30 pointer-events-auto"
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log("Link clicked for order:", _id);
+              }}
             >
-              <Eye className="h-3 w-3 mr-1" />
-              View
-            </Button>
+              <Button
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-2 cursor-pointer pointer-events-auto select-text"
+                type="button"
+              >
+                <Eye className="h-3 w-3 mr-1" />
+                View
+              </Button>
+            </Link>
           </div>
         </div>
       </CardHeader>

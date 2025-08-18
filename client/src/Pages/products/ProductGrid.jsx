@@ -12,6 +12,7 @@ const ProductGrid = ({
   error = null,
   className,
   isHomePage,
+  hasInitialLoad = true, // Add this prop to know if initial load is complete
   gridCols = "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4",
 }) => {
   if (error) {
@@ -26,15 +27,15 @@ const ProductGrid = ({
   if (products.length === 0 && loading) {
     return (
       <div className={`grid ${gridCols} gap-6 mb-8`}>
-        {Array.from({ length: 8 }).map((_, index) => (
+        {Array.from({ length: 12 }).map((_, index) => (
           <ProductCardSkeleton key={`initial-skeleton-${index}`} />
         ))}
       </div>
     );
   }
 
-  // Show no products message only when not loading and no products found
-  if (products.length === 0 && !loading) {
+  // Show no products message only when not loading and no products found AND initial load is complete
+  if (products.length === 0 && !loading && hasInitialLoad) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-center">
         <p className="text-zinc-400 text-lg mb-2">No products found</p>
@@ -50,6 +51,7 @@ const ProductGrid = ({
       loading={loading}
       className={className}
       isHomePage={isHomePage}
+      hasInitialLoad={hasInitialLoad}
     >
       <div className={`grid ${gridCols} gap-6 mb-8`}>
         {products.map((product) => (

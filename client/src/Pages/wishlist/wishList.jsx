@@ -47,7 +47,7 @@ const Wishlist = () => {
         description: "Failed to fetch wishlist",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
+        
       });
     } finally {
       setLoading(false);
@@ -68,7 +68,7 @@ const Wishlist = () => {
         description: "Please login to manage wishlist",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
+        
       });
       navigate("/login");
       return;
@@ -93,7 +93,7 @@ const Wishlist = () => {
         description: "Wishlist cleared successfully!",
         variant: "default",
         className: "bg-green-600 border-green-600 text-white",
-        duration: 2000,
+        
       });
     } catch (error) {
       toast({
@@ -101,7 +101,7 @@ const Wishlist = () => {
         description: "Failed to clear wishlist",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
+        
       });
       console.error("Error clearing wishlist:", error);
     } finally {
@@ -116,7 +116,7 @@ const Wishlist = () => {
         description: "Please login to add items to cart",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
+        
       });
       navigate("/login");
       return;
@@ -147,7 +147,7 @@ const Wishlist = () => {
         description: `${wishlistItems.length} items added to cart!`,
         variant: "default",
         className: "bg-green-600 border-green-600 text-white",
-        duration: 2000,
+        
       });
     } catch (error) {
       toast({
@@ -155,7 +155,7 @@ const Wishlist = () => {
         description: "Failed to add some items to cart",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
+        
       });
       console.error("Error adding all to cart:", error);
     }

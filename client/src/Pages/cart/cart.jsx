@@ -41,7 +41,7 @@ import CartSkeletons from "@/Pages/skeletons/CartSkeletons";
 import TotalPriceSkeleton from "@/Pages/skeletons/TotalPriceSkeleton";
 
 const Cart = () => {
-  const { toast } = useToast();
+  const { toast, success, error } = useToast();
   const [cartList, setCartList] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [originalPrice, setOriginalPrice] = useState(0);
@@ -86,8 +86,8 @@ const Cart = () => {
         }
       );
       setCartStatistics(resp.data.data.statistics);
-    } catch (error) {
-      console.log("Error fetching cart statistics:", error);
+    } catch (err) {
+      console.log("Error fetching cart statistics:", err);
     }
   };
 
@@ -109,20 +109,19 @@ const Cart = () => {
 
       // Show price update notification
       if (respData.priceUpdated) {
-        toastWarning("Some product prices have been updated in your cart");
+        error(
+          "Price Update",
+          "Some product prices have been updated in your cart"
+        );
       }
 
       setLoading(false);
       getCartStatistics(); // Refresh statistics
-    } catch (error) {
-      console.log(error);
-      toast({
-        title: "Error",
-        description: "Failed to load cart items",
-        variant: "destructive",
-      });
+    } catch (err) {
+      console.log(err);
+      error("Error", "Failed to load cart items");
       setLoading(false);
-      return error;
+      return err;
     }
   };
 
@@ -147,8 +146,8 @@ const Cart = () => {
       );
       getCartItems();
       setLoading1(false);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
       setLoading1(false);
     }
   };
@@ -169,14 +168,26 @@ const Cart = () => {
 
       getCartItems();
       setLoading1(false);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err);
       setLoading1(false);
     }
   };
 
   const deleteItem = async (_id) => {
     try {
+      // Optimistically update UI - remove item from cart list immediately
+      const originalCartList = [...cartList];
+      const updatedCartList = cartList.filter((item) => item._id !== _id);
+      setCartList(updatedCartList);
+
+      // Recalculate totals immediately
+      const newTotalPrice = updatedCartList.reduce(
+        (total, item) => total + item.productId.price * item.quantity,
+        0
+      );
+      calculateTotalPrice(newTotalPrice);
+
       const resp = await axios.delete(
         `${import.meta.env.VITE_API_BASE_URL}/api/cart/remove/${_id}`,
         {
@@ -186,11 +197,17 @@ const Cart = () => {
           withCredentials: true,
         }
       );
-      toastInfo("Item removed from cart");
+
+      success("Success", "Item removed from cart");
+
+      // Refresh cart data from server to ensure consistency
       getCartItems();
-    } catch (error) {
-      console.log(error);
-      return error;
+    } catch (err) {
+      console.log(err);
+      // Revert optimistic update on error
+      getCartItems();
+      error("Error", "Failed to remove item from cart");
+      return err;
     }
   };
 

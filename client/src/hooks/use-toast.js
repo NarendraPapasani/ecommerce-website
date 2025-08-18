@@ -3,7 +3,7 @@
 import * as React from "react";
 
 const TOAST_LIMIT = 3;
-const TOAST_REMOVE_DELAY = 3000;
+const TOAST_REMOVE_DELAY = 1000;
 
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",
@@ -103,7 +103,7 @@ function dispatch(action) {
   });
 }
 
-function toast({ duration = 3000, ...props }) {
+function toast({ duration = 1000, ...props }) {
   const id = genId();
 
   const update = (props) =>
@@ -159,14 +159,12 @@ function useToast() {
         title,
         description,
         variant: "success",
-        duration: 3000,
       }),
     error: (title, description) =>
       toast({
         title,
         description,
         variant: "destructive",
-        duration: 3000,
       }),
   };
 }

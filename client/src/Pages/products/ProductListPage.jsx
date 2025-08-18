@@ -6,6 +6,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { toast } from "react-toastify";
+import { RotatingLines } from "react-loader-spinner";
 import { useInfiniteProducts } from "@/Pages/products/useInfiniteProducts";
 import ProductFilters from "@/Pages/products/ProductFilters";
 import ProductGrid from "@/Pages/products/ProductGrid";
@@ -38,6 +39,7 @@ const ProductListPage = () => {
     error,
     hasNextPage,
     totalProducts,
+    hasInitialLoad,
     loadMore,
     searchProducts,
     updateFilters,
@@ -96,10 +98,10 @@ const ProductListPage = () => {
   return (
     <div className="min-h-screen bg-zinc-950 relative">
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
-      <div className="container mx-auto px-4 py-8 relative z-10">
+      <div className="container mx-auto px-4 py-0 md:py-8 relative z-10">
         {/* Header */}
         <div className="mb-8">
-          <nav className="text-sm text-zinc-400 mb-4 font-['Montserrat']">
+          <nav className="text-sm text-zinc-400 mb-4 font-['Montserrat'] hidden md:block">
             <span
               className="hover:text-white cursor-pointer"
               onClick={() => navigate("/")}
@@ -123,12 +125,12 @@ const ProductListPage = () => {
             )}
           </nav>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 font-['Montserrat']">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 font-['Montserrat'] hidden md:block">
             {currentCategory && currentCategory !== "all"
               ? `${getCategoryDisplayName(currentCategory)} Products`
               : "Products"}
           </h1>
-          <p className="text-zinc-400 font-['Montserrat']">
+          <p className="text-zinc-400 font-['Montserrat'] hidden md:block">
             {currentCategory && currentCategory !== "all"
               ? `Explore our ${currentCategory} collection`
               : "Discover our complete product range"}
@@ -162,6 +164,7 @@ const ProductListPage = () => {
               hasMore={hasNextPage}
               onLoadMore={loadMore}
               isHomePage={false}
+              hasInitialLoad={hasInitialLoad}
               className="min-h-96"
             />
           </div>

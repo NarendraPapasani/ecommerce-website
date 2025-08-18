@@ -38,7 +38,7 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
         description: "Please login to add items to cart",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
+        
       });
       navigate("/login");
       return;
@@ -68,7 +68,7 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
         description: `${title} added to cart!`,
         variant: "default",
         className: "bg-green-600 border-green-600 text-white",
-        duration: 2000,
+        
       });
     } catch (error) {
       toast({
@@ -76,7 +76,7 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
         description: "Failed to add to cart",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
+        
       });
       console.error("Error adding to cart:", error);
     } finally {
@@ -93,7 +93,7 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
         description: "Please login to manage wishlist",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
+        
       });
       navigate("/login");
       return;
@@ -117,7 +117,7 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
         description: `${title} removed from wishlist!`,
         variant: "default",
         className: "bg-green-600 border-green-600 text-white",
-        duration: 2000,
+        
       });
 
       // Call the parent callback to refresh the wishlist
@@ -130,7 +130,7 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
         description: "Failed to remove from wishlist",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
+        
       });
       console.error("Error removing from wishlist:", error);
     } finally {

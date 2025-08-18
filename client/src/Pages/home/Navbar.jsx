@@ -313,7 +313,10 @@ const Navbar = () => {
                 ))}
 
                 {jwt && (
-                  <div className="mt-4 p-4 flex items-center">
+                  <div
+                    className="mt-4 p-4 flex items-center cursor-pointer hover:bg-zinc-800"
+                    onClick={() => navigate("/my-profile")}
+                  >
                     <Avatar className="mr-3">
                       <AvatarImage
                         src="https://github.com/shadcn.png"

@@ -7,6 +7,7 @@ const InfiniteScroll = ({
   isHomePage,
   loadMore,
   children,
+  hasInitialLoad = true, // Add this prop
   threshold = 100,
   className = "",
 }) => {
@@ -64,7 +65,7 @@ const InfiniteScroll = ({
       )}
 
       {/* End of results indicator */}
-      {!hasNextPage && !loading && !isHomePage && (
+      {!hasNextPage && !loading && !isHomePage && hasInitialLoad && (
         <div className="text-center py-4 text-zinc-500">
           <p>You've reached the end of our product collection!</p>
         </div>

@@ -180,8 +180,9 @@ const OrderDetails = () => {
   const formatted = formatDate(orderDetails.createdAt);
 
   return (
-    <div className="min-h-screen bg-slate-950 py-4">
-      <div className="container mx-auto px-4 max-w-4xl">
+    <div className="min-h-screen bg-zinc-950 py-4 relative">
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+      <div className="container mx-auto px-4 max-w-4xl relative z-10">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-4">
@@ -272,6 +273,213 @@ const OrderDetails = () => {
                         ? "Online Payment"
                         : orderDetails.paymentMethod || "Not specified"}
                     </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Order Tracking */}
+            <Card className="bg-slate-800/50 border-slate-700/50">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Truck className="h-5 w-5 text-blue-400" />
+                  <CardTitle className="text-white text-lg">
+                    Order Tracking
+                  </CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Progress Steps */}
+                  <div className="flex items-center justify-between relative">
+                    {/* Progress Line */}
+                    <div className="absolute top-4 left-4 right-4 h-0.5 bg-slate-600/50">
+                      <div
+                        className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 transition-all duration-500"
+                        style={{
+                          width: (() => {
+                            const status =
+                              orderDetails.orderStatus?.toLowerCase();
+                            if (status === "pending" || status === "processing")
+                              return "25%";
+                            if (status === "confirmed") return "50%";
+                            if (
+                              status === "shipped" ||
+                              status === "out for delivery"
+                            )
+                              return "75%";
+                            if (
+                              status === "delivered" ||
+                              status === "completed"
+                            )
+                              return "100%";
+                            return "0%";
+                          })(),
+                        }}
+                      />
+                    </div>
+
+                    {/* Step Items */}
+                    {[
+                      {
+                        key: "ordered",
+                        label: "Order Placed",
+                        icon: Package,
+                        statuses: [
+                          "pending",
+                          "processing",
+                          "confirmed",
+                          "shipped",
+                          "out for delivery",
+                          "delivered",
+                          "completed",
+                        ],
+                      },
+                      {
+                        key: "confirmed",
+                        label: "Confirmed",
+                        icon: CheckCircle,
+                        statuses: [
+                          "confirmed",
+                          "shipped",
+                          "out for delivery",
+                          "delivered",
+                          "completed",
+                        ],
+                      },
+                      {
+                        key: "shipped",
+                        label: "Shipped",
+                        icon: Truck,
+                        statuses: [
+                          "shipped",
+                          "out for delivery",
+                          "delivered",
+                          "completed",
+                        ],
+                      },
+                      {
+                        key: "delivered",
+                        label: "Delivered",
+                        icon: CheckCircle,
+                        statuses: ["delivered", "completed"],
+                      },
+                    ].map((step, index) => {
+                      const currentStatus =
+                        orderDetails.orderStatus?.toLowerCase();
+                      const isActive = step.statuses.includes(currentStatus);
+                      const isCurrent =
+                        (step.key === "ordered" &&
+                          ["pending", "processing"].includes(currentStatus)) ||
+                        (step.key === "confirmed" &&
+                          currentStatus === "confirmed") ||
+                        (step.key === "shipped" &&
+                          ["shipped", "out for delivery"].includes(
+                            currentStatus
+                          )) ||
+                        (step.key === "delivered" &&
+                          ["delivered", "completed"].includes(currentStatus));
+
+                      return (
+                        <div
+                          key={step.key}
+                          className="flex flex-col items-center relative z-10"
+                        >
+                          <div
+                            className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                              isActive
+                                ? "bg-blue-600 border-blue-600 text-white"
+                                : "bg-slate-700 border-slate-600 text-slate-400"
+                            } ${
+                              isCurrent
+                                ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-800"
+                                : ""
+                            }`}
+                          >
+                            <step.icon className="h-4 w-4" />
+                          </div>
+                          <div className="mt-2 text-center">
+                            <p
+                              className={`text-xs font-medium ${
+                                isActive ? "text-white" : "text-slate-400"
+                              }`}
+                            >
+                              {step.label}
+                            </p>
+                            {isCurrent && (
+                              <div className="flex items-center justify-center mt-1">
+                                <div className="w-1 h-1 bg-blue-400 rounded-full animate-pulse" />
+                                <div
+                                  className="w-1 h-1 bg-blue-400 rounded-full animate-pulse mx-1"
+                                  style={{ animationDelay: "0.2s" }}
+                                />
+                                <div
+                                  className="w-1 h-1 bg-blue-400 rounded-full animate-pulse"
+                                  style={{ animationDelay: "0.4s" }}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Current Status Description */}
+                  <div className="mt-6 p-4 bg-slate-700/30 rounded-lg border border-slate-600/30">
+                    <div className="flex items-center gap-3">
+                      {getStatusIcon(orderDetails.orderStatus)}
+                      <div>
+                        <h4 className="text-white font-medium text-sm">
+                          {(() => {
+                            const status =
+                              orderDetails.orderStatus?.toLowerCase();
+                            switch (status) {
+                              case "pending":
+                              case "processing":
+                                return "Your order is being processed";
+                              case "confirmed":
+                                return "Order confirmed and ready for shipping";
+                              case "shipped":
+                                return "Your order is on its way";
+                              case "out for delivery":
+                                return "Order is out for delivery";
+                              case "delivered":
+                              case "completed":
+                                return "Order delivered successfully";
+                              case "cancelled":
+                                return "Order has been cancelled";
+                              default:
+                                return "Order status updated";
+                            }
+                          })()}
+                        </h4>
+                        <p className="text-slate-400 text-xs mt-1">
+                          {(() => {
+                            const status =
+                              orderDetails.orderStatus?.toLowerCase();
+                            switch (status) {
+                              case "pending":
+                              case "processing":
+                                return "We are preparing your order for shipment";
+                              case "confirmed":
+                                return "Your order will be shipped soon";
+                              case "shipped":
+                                return "Expected delivery in 2-3 business days";
+                              case "out for delivery":
+                                return "Your order will be delivered today";
+                              case "delivered":
+                              case "completed":
+                                return "Thank you for shopping with us!";
+                              case "cancelled":
+                                return "Order cancelled as requested";
+                              default:
+                                return "Status will be updated soon";
+                            }
+                          })()}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </CardContent>

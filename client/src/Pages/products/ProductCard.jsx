@@ -10,7 +10,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const ProductCard = ({ product, className }) => {
-  const { toast } = useToast();
+  const { toast, success, error } = useToast();
   const { _id, title, price, images, rating, category } = product;
   const navigate = useNavigate();
   const [isWishlisted, setIsWishlisted] = useState(false);
@@ -65,13 +65,7 @@ const ProductCard = ({ product, className }) => {
     e.stopPropagation();
 
     if (!jwt) {
-      toast({
-        title: "Authentication Required",
-        description: "Please login to add items to cart",
-        variant: "destructive",
-        className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
-      });
+      error("Authentication Required", "Please login to add items to cart");
       navigate("/login");
       return;
     }
@@ -95,22 +89,10 @@ const ProductCard = ({ product, className }) => {
         }
       );
 
-      toast({
-        title: "Success",
-        description: `${title} added to cart!`,
-        variant: "default",
-        className: "bg-green-600 border-green-600 text-white",
-        duration: 2000,
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add to cart",
-        variant: "destructive",
-        className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
-      });
-      console.error("Error adding to cart:", error);
+      success("Success", `${title} added to cart!`);
+    } catch (err) {
+      error("Error", "Failed to add to cart");
+      console.error("Error adding to cart:", err);
     } finally {
       setIsAddingToCart(false);
     }
@@ -120,13 +102,7 @@ const ProductCard = ({ product, className }) => {
     e.stopPropagation();
 
     if (!jwt) {
-      toast({
-        title: "Authentication Required",
-        description: "Please login to add items to wishlist",
-        variant: "destructive",
-        className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
-      });
+      error("Authentication Required", "Please login to add items to wishlist");
       navigate("/login");
       return;
     }
@@ -146,13 +122,7 @@ const ProductCard = ({ product, className }) => {
         );
 
         setIsWishlisted(true);
-        toast({
-          title: "Success",
-          description: `${title} added to wishlist!`,
-          variant: "default",
-          className: "bg-green-600 border-green-600 text-white",
-          duration: 2000,
-        });
+        success("Success", `${title} added to wishlist!`);
       } else {
         // Remove from wishlist
         await axios.delete(
@@ -166,25 +136,14 @@ const ProductCard = ({ product, className }) => {
         );
 
         setIsWishlisted(false);
-        toast({
-          title: "Success",
-          description: `${title} removed from wishlist!`,
-          variant: "default",
-          className: "bg-green-600 border-green-600 text-white",
-          duration: 2000,
-        });
+        success("Success", `${title} removed from wishlist!`);
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: `Failed to ${
-          isWishlisted ? "remove from" : "add to"
-        } wishlist`,
-        variant: "destructive",
-        className: "bg-red-600 border-red-600 text-white",
-        duration: 2000,
-      });
-      console.error("Error updating wishlist:", error);
+    } catch (err) {
+      error(
+        "Error",
+        `Failed to ${isWishlisted ? "remove from" : "add to"} wishlist`
+      );
+      console.error("Error updating wishlist:", err);
     }
   };
 

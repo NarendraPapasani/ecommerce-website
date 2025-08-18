@@ -198,7 +198,7 @@ const CheckOut = () => {
         }
       );
 
-      if (response.status === 201) {
+      if (response.status === 201 || response.status === 200) {
         // Update the addresses list
         const updatedAddresses = addresses.map((addr) =>
           addr.addressId === editableAddress.addressId ? editableAddress : addr
@@ -211,6 +211,8 @@ const CheckOut = () => {
           description: "Address updated successfully!",
           variant: "success",
         });
+      } else {
+        throw new Error(`Unexpected response status: ${response.status}`);
       }
     } catch (error) {
       console.error("Error updating address:", error);
@@ -645,7 +647,7 @@ const CheckOut = () => {
   };
 
   const platformFee = 29;
-  const deliveryFee = cartTotal > 1000 ? 0 : 99;
+  const deliveryFee = cartTotal > 300 ? 0 : 99;
   const codFee = paymentMethod === "cod" ? 10 : 0;
   const totalAfterDiscount =
     Number(cartTotal || 0) -
@@ -669,8 +671,8 @@ const CheckOut = () => {
 
   if (loading1) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-zinc-950">
-        <div className="text-center">
+      <div className="fixed inset-0 flex justify-center items-center bg-zinc-950 z-50">
+        <div className="flex flex-col items-center justify-center text-center">
           <RotatingLines
             visible={true}
             height="100"
@@ -680,7 +682,7 @@ const CheckOut = () => {
             animationDuration="0.75"
             ariaLabel="rotating-lines-loading"
           />
-          <p className="text-white text-left mt-4 text-lg">
+          <p className="text-white text-center mt-4 text-lg">
             Processing your order...
           </p>
         </div>
@@ -1706,7 +1708,7 @@ const CheckOut = () => {
               <div className="mx-auto mb-4 w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
                 <CheckCircle className="h-10 w-10 text-green-600" />
               </div>
-              <AlertDialogTitle className="text-white text-2xl font-bold">
+              <AlertDialogTitle className="text-white text-2xl font-bold text-center">
                 Payment Successful!
               </AlertDialogTitle>
               <AlertDialogDescription className="text-slate-300 text-center">
