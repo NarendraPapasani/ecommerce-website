@@ -10,7 +10,6 @@ const generateToken = (userId, res) => {
     sameSite: "strict", // Prevent CSRF attacks
     secure: process.env.NODE_ENV !== "development", // Use secure cookies in production
   });
-  console.log("Cookie set:", res.getHeader("Set-Cookie")); // Log the cookies set in the response
   return token;
 };
 

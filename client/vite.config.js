@@ -11,8 +11,9 @@ export default defineConfig({
     },
   },
   server: {
+    port: 5173,
     proxy: {
-      "https://ecommerce-website-crkh.onrender.com/api": {
+      "${import.meta.env.VITE_API_BASE_URL}/api": {
         target: "http://localhost:8000",
         changeOrigin: true,
       },

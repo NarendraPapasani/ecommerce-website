@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Sign-In Test</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  </head>
+  <body>
+    <h1>Google Sign-In Test</h1>
+    <div
+      id="g_id_onload"
+      data-client_id="621881246603-3rb6oj2s5t1btoqukvr6cbirh0umuh26.apps.googleusercontent.com"
+      data-context="signin"
+      data-ux_mode="popup"
+      data-callback="handleCredentialResponse"
+      data-auto_prompt="false"
+    ></div>
+
+    <div
+      class="g_id_signin"
+      data-type="standard"
+      data-shape="rectangular"
+      data-theme="outline"
+      data-text="signin_with"
+      data-size="large"
+      data-logo_alignment="left"
+    ></div>
+
+    <script>
+      function handleCredentialResponse(response) {
+        console.log("Encoded JWT ID token: " + response.credential);
+        const payload = JSON.parse(atob(response.credential.split(".")[1]));
+        console.log("User info:", payload);
+        alert("Google Sign-In successful! Check console for details.");
+      }
+
+      window.onload = function () {
+        console.log("Page loaded");
+        console.log("Google object:", window.google);
+
+        setTimeout(() => {
+          console.log("Google object after delay:", window.google);
+          if (window.google?.accounts?.id) {
+            console.log("Google Identity Services available");
+          } else {
+            console.error("Google Identity Services not available");
+          }
+        }, 2000);
+      };
+    </script>
+  </body>
+</html>

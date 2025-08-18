@@ -16,6 +16,23 @@ const addAddress = async (req, res) => {
       defaultAddress,
     } = req.body;
 
+    // Validate required fields
+    if (
+      !fullName ||
+      !mobileNumber ||
+      !pincode ||
+      !building ||
+      !area ||
+      !town ||
+      !state ||
+      !country
+    ) {
+      return res.status(400).json({
+        status: "error",
+        message: "All required fields must be filled",
+      });
+    }
+
     let address = await Address.findOne({ email });
     if (!address) {
       address = new Address({
@@ -24,18 +41,25 @@ const addAddress = async (req, res) => {
       });
     }
 
+    // If this is set as default, make sure no other address is default
+    if (defaultAddress) {
+      address.addresses.forEach((addr) => {
+        addr.defaultAddress = false;
+      });
+    }
+
     const newAddress = {
-      addressId: Math.random().toString(36).substr(2, 7),
+      addressId: Math.random().toString(36).substr(2, 9),
       country,
       fullName,
       mobileNumber,
       pincode,
       building,
       area,
-      LandMark,
+      LandMark: LandMark || "",
       town,
       state,
-      defaultAddress,
+      defaultAddress: defaultAddress || false,
     };
 
     address.addresses.push(newAddress);
@@ -47,6 +71,7 @@ const addAddress = async (req, res) => {
       id: newAddress.addressId,
     });
   } catch (error) {
+    console.error("Add address error:", error);
     res.status(500).json({
       status: "error",
       message: error.message,
@@ -59,14 +84,22 @@ const getAllAddress = async (req, res) => {
     const { email } = req.user;
     const address = await Address.findOne({ email });
     if (!address) {
-      return res.status(404).json({
-        status: "error",
-        message: "Address not found",
+      return res.status(200).json({
+        status: "success",
+        address: { addresses: [] },
+        message: "No addresses found",
       });
     }
-    res.status(201).json({ status: "success", address });
+    res.status(200).json({
+      status: "success",
+      address,
+    });
   } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
+    console.error("Get addresses error:", error);
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
   }
 };
 
@@ -86,6 +119,24 @@ const updateAddress = async (req, res) => {
       state,
       defaultAddress,
     } = req.body;
+
+    // Validate required fields
+    if (
+      !fullName ||
+      !mobileNumber ||
+      !pincode ||
+      !building ||
+      !area ||
+      !town ||
+      !state ||
+      !country
+    ) {
+      return res.status(400).json({
+        status: "error",
+        message: "All required fields must be filled",
+      });
+    }
+
     const address = await Address.findOne({ email });
     if (!address) {
       return res.status(404).json({
@@ -93,32 +144,47 @@ const updateAddress = async (req, res) => {
         message: "Address not found",
       });
     }
+
     const addressToUpdate = address.addresses.find(
-      (address) => address.addressId === addressId
+      (addr) => addr.addressId === addressId
     );
-    if (addressToUpdate) {
-      addressToUpdate.country = country;
-      addressToUpdate.fullName = fullName;
-      addressToUpdate.mobileNumber = mobileNumber;
-      addressToUpdate.pincode = pincode;
-      addressToUpdate.building = building;
-      addressToUpdate.area = area;
-      addressToUpdate.LandMark = LandMark;
-      addressToUpdate.town = town;
-      addressToUpdate.state = state;
-      addressToUpdate.defaultAddress = defaultAddress;
-      await address.save();
-      res.status(201).json({
-        status: "success",
-        message: "Address updated successfully",
-      });
-    } else {
-      res.status(404).json({
+
+    if (!addressToUpdate) {
+      return res.status(404).json({
         status: "error",
         message: "Address not found",
       });
     }
+
+    // If this is being set as default, make sure no other address is default
+    if (defaultAddress) {
+      address.addresses.forEach((addr) => {
+        if (addr.addressId !== addressId) {
+          addr.defaultAddress = false;
+        }
+      });
+    }
+
+    // Update the address
+    addressToUpdate.country = country;
+    addressToUpdate.fullName = fullName;
+    addressToUpdate.mobileNumber = mobileNumber;
+    addressToUpdate.pincode = pincode;
+    addressToUpdate.building = building;
+    addressToUpdate.area = area;
+    addressToUpdate.LandMark = LandMark || "";
+    addressToUpdate.town = town;
+    addressToUpdate.state = state;
+    addressToUpdate.defaultAddress = defaultAddress || false;
+
+    await address.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Address updated successfully",
+    });
   } catch (error) {
+    console.error("Update address error:", error);
     res.status(500).json({
       status: "error",
       message: error.message,
@@ -130,28 +196,43 @@ const deleteAddress = async (req, res) => {
   try {
     const { email } = req.user;
     const { addressId } = req.params;
+
     const address = await Address.findOne({ email });
     if (!address) {
-      return res
-        .status(404)
-        .json({ status: "error", message: "Address not found" });
+      return res.status(404).json({
+        status: "error",
+        message: "Address not found",
+      });
     }
+
     const addressToDelete = address.addresses.find(
-      (address) => address.addressId === addressId
+      (addr) => addr.addressId === addressId
     );
-    if (addressToDelete) {
-      address.addresses = address.addresses.filter(
-        (address) => address.addressId !== addressId
-      );
-      await address.save();
-      res
-        .status(201)
-        .json({ status: "success", message: "Address deleted successfully" });
-    } else {
-      res.status(404).json({ status: "error", message: "Address not found" });
+
+    if (!addressToDelete) {
+      return res.status(404).json({
+        status: "error",
+        message: "Address not found",
+      });
     }
+
+    // Remove the address
+    address.addresses = address.addresses.filter(
+      (addr) => addr.addressId !== addressId
+    );
+
+    await address.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Address deleted successfully",
+    });
   } catch (error) {
-    res.status(500).json({ status: "error", message: error.message });
+    console.error("Delete address error:", error);
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
   }
 };
 

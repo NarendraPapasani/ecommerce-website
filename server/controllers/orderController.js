@@ -1,12 +1,21 @@
 const Order = require("../models/orderModel");
 const Product = require("../models/productModel");
 const Address = require("../models/addressModel");
+const Payment = require("../models/paymentModel");
+const { sendOrderConfirmationEmail } = require("../lib/utils/emailService");
 const mongoose = require("mongoose");
 
 const addOrder = async (req, res) => {
   try {
-    const { cartItems, addressId, totalPrice, paymentMethod } = req.body;
-    const { email } = req.user;
+    const {
+      cartItems,
+      addressId,
+      totalPrice,
+      paymentMethod,
+      paymentDetails,
+      paymentStatus = "pending",
+    } = req.body;
+    const { email, _id: userId } = req.user;
 
     // Validate product IDs and add required fields
     for (const item of cartItems) {
@@ -20,7 +29,11 @@ const addOrder = async (req, res) => {
       // Add required fields from the product
       item.title = product.title;
       item.price = product.price;
-      item.image = product.image;
+      item.image =
+        product.images && product.images.length > 0 ? product.images[0] : "";
+      item.slug = product.slug;
+      item.description = product.description;
+      item.category = product.category;
     }
 
     // Validate address ID
@@ -41,6 +54,7 @@ const addOrder = async (req, res) => {
       });
     }
 
+    // Find or create order document
     let orderDetails = await Order.findOne({ email });
     if (!orderDetails) {
       orderDetails = new Order({
@@ -48,6 +62,8 @@ const addOrder = async (req, res) => {
         orders: [],
       });
     }
+
+    // Add the new order
     orderDetails.orders.push({
       cartItems: cartItems,
       addressId: addressId,
@@ -56,12 +72,69 @@ const addOrder = async (req, res) => {
     });
 
     await orderDetails.save();
+
+    // Get the newly created order ID
+    const newOrder = orderDetails.orders[orderDetails.orders.length - 1];
+    const orderId = newOrder._id;
+
+    // Create payment document
+    const paymentData = {
+      userId: userId,
+      orderId: orderId,
+      paymentMethod: paymentMethod,
+      amount: totalPrice,
+      currency: "INR",
+      status: paymentStatus === "completed" ? "completed" : "pending",
+    };
+
+    // Add payment method specific details
+    if (paymentMethod === "cod") {
+      paymentData.cod = {
+        confirmed: false,
+        deliveryStatus: "pending",
+      };
+      paymentData.status = "pending"; // COD is always pending until delivery
+    } else if (paymentMethod === "razorpay" && paymentDetails) {
+      paymentData.razorpay = {
+        paymentId: paymentDetails.razorpay_payment_id || null,
+        orderId: paymentDetails.razorpay_order_id || null,
+        signature: paymentDetails.razorpay_signature || null,
+        gatewayResponse: paymentDetails,
+      };
+      paymentData.status = paymentStatus; // Use the provided status for online payments
+    }
+
+    console.log("Payment Data:", paymentData);
+
+    // Create the payment document
+    const payment = new Payment(paymentData);
+    await payment.save();
+
+    // Send response first to confirm order success
     res.status(200).json({
       status: "success",
       message: "Order placed successfully",
       order: orderDetails,
+      payment: payment,
+    });
+
+    // Send order confirmation email after successful order placement
+    // This runs asynchronously and doesn't affect the API response
+    setImmediate(async () => {
+      try {
+        await sendOrderConfirmationEmail(email, {
+          cartItems: cartItems,
+          totalPrice: totalPrice,
+          paymentMethod: paymentMethod,
+          orderId: orderId,
+        });
+      } catch (emailError) {
+        console.error("Failed to send order confirmation email:", emailError);
+        // Email failure doesn't affect the order - it's already placed successfully
+      }
     });
   } catch (error) {
+    console.error("Error in addOrder:", error);
     res.status(500).json({
       status: "error",
       message: error.message,

@@ -38,7 +38,7 @@ const addressSchema = new mongoose.Schema({
       },
       LandMark: {
         type: String,
-        required: true,
+        required: false,
       },
       town: {
         type: String,

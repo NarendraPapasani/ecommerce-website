@@ -19,7 +19,34 @@ const cartSchema = new mongoose.Schema({
       },
       image: {
         type: String,
-        required: true,
+        default: "",
+      },
+      images: [
+        {
+          type: String,
+        },
+      ],
+      description: {
+        type: String,
+      },
+      category: [
+        {
+          id: String,
+          name: String,
+          slug: String,
+          image: String,
+          creationAt: Date,
+          updatedAt: Date,
+        },
+      ],
+      rating: {
+        rate: Number,
+        count: Number,
+      },
+      tags: [String],
+      addedAt: {
+        type: Date,
+        default: Date.now,
       },
       quantity: {
         type: Number,
