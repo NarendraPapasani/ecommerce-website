@@ -22,6 +22,18 @@ const ProductGrid = ({
     );
   }
 
+  // Show initial loading skeletons when first loading (no products yet and loading)
+  if (products.length === 0 && loading) {
+    return (
+      <div className={`grid ${gridCols} gap-6 mb-8`}>
+        {Array.from({ length: 8 }).map((_, index) => (
+          <ProductCardSkeleton key={`initial-skeleton-${index}`} />
+        ))}
+      </div>
+    );
+  }
+
+  // Show no products message only when not loading and no products found
   if (products.length === 0 && !loading) {
     return (
       <div className="flex flex-col items-center justify-center h-64 text-center">

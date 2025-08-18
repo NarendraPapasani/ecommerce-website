@@ -149,8 +149,8 @@ const ProductFilters = ({
           <Slider
             value={localPriceRange}
             onValueChange={handlePriceChange}
-            max={priceRange.maxPrice || 100} // Match backend default
-            min={priceRange.minPrice || 0}
+            max={100}
+            min={0}
             step={10}
             className="w-full"
           />

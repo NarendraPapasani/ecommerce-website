@@ -3,11 +3,12 @@ import axios from "axios";
 
 export const useInfiniteProducts = (initialFilters = {}) => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // Start with true for initial load
   const [error, setError] = useState(null);
-  const [hasNextPage, setHasNextPage] = useState(true);
+  const [hasNextPage, setHasNextPage] = useState(false); // Start with false until we know
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [hasInitialLoad, setHasInitialLoad] = useState(false); // Track initial load completion
   const [filters, setFilters] = useState({
     search: "",
     category: "all",
@@ -72,6 +73,11 @@ export const useInfiniteProducts = (initialFilters = {}) => {
         setHasNextPage(pagination.hasNextPage || false);
         setCurrentPage(pagination.currentPage || 1);
         setTotalProducts(pagination.totalProducts || 0);
+
+        // Mark initial load as complete after first successful fetch
+        if (!hasInitialLoad) {
+          setHasInitialLoad(true);
+        }
       } catch (err) {
         if (err.name !== "AbortError" && err.name !== "CanceledError") {
           setError("Failed to fetch products");
@@ -94,6 +100,9 @@ export const useInfiniteProducts = (initialFilters = {}) => {
   const updateFilters = useCallback((newFilters) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
     setCurrentPage(1);
+    setHasInitialLoad(false); // Reset initial load state when filters change
+    setLoading(true); // Set loading to true when filters change
+    setHasNextPage(false); // Reset hasNextPage when filters change
   }, []);
 
   const resetFilters = useCallback(() => {
@@ -131,6 +140,7 @@ export const useInfiniteProducts = (initialFilters = {}) => {
     currentPage,
     totalProducts,
     filters,
+    hasInitialLoad, // Add this to the return
     loadMore,
     updateFilters,
     resetFilters,
