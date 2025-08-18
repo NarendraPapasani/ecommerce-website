@@ -9,7 +9,7 @@
 </div>
 
 <div align="center">
-  <h3>🚀 <a href="https://ecommified.netlify.app">Live Demo</a></h3>
+  <h3>🚀 <a href="https://blinkshopn.netlify.app">Live Demo</a></h3>
   <p>A full-stack modern ecommerce platform with advanced features and beautiful UI</p>
 </div>
 
