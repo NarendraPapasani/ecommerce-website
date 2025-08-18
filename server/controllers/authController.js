@@ -110,6 +110,27 @@ const googleAuth = async (req, res) => {
     }
   } catch (error) {
     console.error("Google auth error:", error);
+
+    // Handle Mongoose validation errors
+    if (error.name === "ValidationError") {
+      const validationErrors = {};
+      for (const field in error.errors) {
+        if (error.errors[field].kind === "enum") {
+          validationErrors[
+            field
+          ] = `Invalid ${field} value. Please select a valid option.`;
+        } else {
+          validationErrors[field] = error.errors[field].message;
+        }
+      }
+
+      return res.status(400).json({
+        msg: "Validation failed during Google authentication",
+        success: false,
+        errors: validationErrors,
+      });
+    }
+
     res.status(500).json({ msg: "Server error during Google authentication" });
   }
 };
@@ -348,6 +369,27 @@ const signup = async (req, res) => {
     }
   } catch (error) {
     console.error("Signup error:", error);
+
+    // Handle Mongoose validation errors
+    if (error.name === "ValidationError") {
+      const validationErrors = {};
+      for (const field in error.errors) {
+        if (error.errors[field].kind === "enum") {
+          validationErrors[
+            field
+          ] = `Invalid ${field} value. Please select a valid option.`;
+        } else {
+          validationErrors[field] = error.errors[field].message;
+        }
+      }
+
+      return res.status(400).json({
+        msg: "Validation failed",
+        success: false,
+        errors: validationErrors,
+      });
+    }
+
     res.status(500).json({ msg: "Server error during signup" });
   }
 };
@@ -561,6 +603,27 @@ const updateUserProfile = async (req, res) => {
     });
   } catch (error) {
     console.error("Update profile error:", error);
+
+    // Handle Mongoose validation errors
+    if (error.name === "ValidationError") {
+      const validationErrors = {};
+      for (const field in error.errors) {
+        if (error.errors[field].kind === "enum") {
+          validationErrors[
+            field
+          ] = `Invalid ${field} value. Please select a valid option.`;
+        } else {
+          validationErrors[field] = error.errors[field].message;
+        }
+      }
+
+      return res.status(400).json({
+        msg: "Validation failed",
+        success: false,
+        errors: validationErrors,
+      });
+    }
+
     res.status(500).json({ msg: "Server error" });
   }
 };

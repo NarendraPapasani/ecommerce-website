@@ -45,11 +45,15 @@ const userSchema = new mongoose.Schema(
       enum: [
         "electronics",
         "clothing",
+        "clothes", // Alternative for clothing
         "home",
+        "furniture", // Alternative for home/furniture
         "beauty",
         "sports",
         "books",
         "toys",
+        "shoes", // Shoes & Footwear
+        "miscellaneous", // Miscellaneous items
       ],
     },
     password: {

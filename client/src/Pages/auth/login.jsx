@@ -94,6 +94,7 @@ const Login = () => {
   const [signupLoading, setSignupLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [googleSignInAttempted, setGoogleSignInAttempted] = useState(false);
+  const [googleSignInTimeout, setGoogleSignInTimeout] = useState(null);
 
   // Product categories for selection
   const productCategories = [
@@ -164,6 +165,15 @@ const Login = () => {
     setTimeout(checkGoogleScript, 500);
   }, []);
 
+  // Cleanup timeout on component unmount
+  useEffect(() => {
+    return () => {
+      if (googleSignInTimeout) {
+        clearTimeout(googleSignInTimeout);
+      }
+    };
+  }, [googleSignInTimeout]);
+
   // Handle login form changes
   const handleLoginChange = (field, value) => {
     setLoginForm((prev) => ({ ...prev, [field]: value }));
@@ -194,6 +204,12 @@ const Login = () => {
   // Handle Google Response
   const handleGoogleResponse = async (response) => {
     try {
+      // Clear the timeout since user completed sign-in
+      if (googleSignInTimeout) {
+        clearTimeout(googleSignInTimeout);
+        setGoogleSignInTimeout(null);
+      }
+
       setLoginLoading(true);
 
       // Decode the JWT token from Google
@@ -490,6 +506,23 @@ const Login = () => {
   const handleGoogleSignIn = () => {
     console.log("Google Sign-In button clicked");
 
+    // Set loading state when user clicks Google Sign-In
+    setLoginLoading(true);
+
+    // Clear any existing timeout
+    if (googleSignInTimeout) {
+      clearTimeout(googleSignInTimeout);
+    }
+
+    // Set a timeout to stop loading if user doesn't complete sign-in within 30 seconds
+    const timeoutId = setTimeout(() => {
+      console.log("Google Sign-In timeout - stopping loading state");
+      setLoginLoading(false);
+      setGoogleSignInTimeout(null);
+    }, 30000); // 30 seconds timeout
+
+    setGoogleSignInTimeout(timeoutId);
+
     // Check if Google Identity Services is available
     if (typeof window !== "undefined" && window.google?.accounts?.id) {
       try {
@@ -558,17 +591,33 @@ const Login = () => {
                 }
               }, 1000);
             }, 100);
+          } else {
+            // If prompt was displayed successfully, stop loading here as well
+            // The actual loading will continue in handleGoogleResponse
+            console.log("Google Sign-In prompt displayed successfully");
           }
         });
       } catch (error) {
         console.error("Google Sign-In initialization error:", error);
         toast.error("Google Sign-In failed to initialize. Please try again.");
+        // Stop loading on error and clear timeout
+        setLoginLoading(false);
+        if (googleSignInTimeout) {
+          clearTimeout(googleSignInTimeout);
+          setGoogleSignInTimeout(null);
+        }
       }
     } else {
       console.error("Google Identity Services not loaded");
       toast.error(
         "Google Sign-In is not available. Please reload the page and try again."
       );
+      // Stop loading if Google Services not available and clear timeout
+      setLoginLoading(false);
+      if (googleSignInTimeout) {
+        clearTimeout(googleSignInTimeout);
+        setGoogleSignInTimeout(null);
+      }
     }
   };
 
@@ -1628,7 +1677,7 @@ const Login = () => {
                     <button
                       type="button"
                       onClick={handleGoogleSignIn}
-                      disabled={signupLoading}
+                      disabled={loginLoading}
                       className="flex items-center justify-center w-full gap-3 px-4 py-3 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg shadow-sm text-gray-700 font-medium transition-all duration-200 hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -1650,7 +1699,7 @@ const Login = () => {
                         />
                       </svg>
                       <span className="text-sm font-medium">
-                        {signupLoading ? "Signing in..." : "Google"}
+                        {loginLoading ? "Signing in..." : "Google"}
                       </span>
                     </button>
                   </div>
