@@ -53,6 +53,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use("/api/auth", require("./routes/authRoute"));
+app.use("/api/admin", require("./routes/adminRoute"));
 app.use("/api/products", require("./routes/productRoute"));
 app.use("/api/cart", authenticateController, require("./routes/cartRoute"));
 app.use(
