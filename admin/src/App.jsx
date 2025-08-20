@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import AdminLogin from './pages/auth/AdminLogin';
 import Dashboard from './pages/dashboard/Dashboard';
+import UsersManagement from './pages/users/UsersManagement';
 import AdminLayout from './components/layout/AdminLayout';
 import AdminProtectedRoute from './components/AdminProtectedRoute';
 import { Toaster } from './components/ui/toaster';
@@ -28,7 +29,7 @@ function App() {
             element={
               <AdminProtectedRoute>
                 <AdminLayout>
-                  <div className="text-white">Users Management - Coming Soon</div>
+                  <UsersManagement />
                 </AdminLayout>
               </AdminProtectedRoute>
             }
