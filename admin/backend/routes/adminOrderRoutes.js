@@ -7,6 +7,7 @@ const {
   generateShippingLabel,
   processRefund,
   getOrderAnalytics,
+  getUserLastOrders,
 } = require("../controllers/adminOrderController");
 
 const router = express.Router();
@@ -33,6 +34,8 @@ router.put("/:id/status", updateOrderStatus);
 // Generate invoice PDF
 // GET /admin/orders/:id/invoice
 router.get("/:id/invoice", generateInvoice);
+
+router.get("/last-orders/:id", getUserLastOrders);
 
 // Generate shipping label PDF
 // GET /admin/orders/:id/shipping-label

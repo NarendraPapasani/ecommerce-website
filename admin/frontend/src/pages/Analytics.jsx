@@ -318,7 +318,12 @@ export default function Analytics() {
                   >
                     <div>
                       <p className="font-medium text-white">
-                        {customer.user?.name || "Unknown"}
+                        {(customer.user?.firstName ||
+                          customer.user?.email ||
+                          "Unknown") +
+                          (customer.user?.lastName
+                            ? ` ${customer.user.lastName}`
+                            : "")}
                       </p>
                       <p className="text-sm text-slate-400">
                         {customer.orderCount} orders

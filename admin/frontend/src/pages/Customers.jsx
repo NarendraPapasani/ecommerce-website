@@ -65,6 +65,7 @@ import {
 } from "lucide-react";
 
 export default function Customers() {
+  // Core component state
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -77,8 +78,10 @@ export default function Customers() {
   const [showCustomerDetails, setShowCustomerDetails] = useState(false);
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [loadingCustomerDetails, setLoadingCustomerDetails] = useState(false);
+  const [loadingCustomerDetailsId, setLoadingCustomerDetailsId] =
+    useState(null);
   const [errors, setErrors] = useState({});
+  const [actionTargetId, setActionTargetId] = useState(null);
 
   // Status update form
   const [statusUpdateForm, setStatusUpdateForm] = useState({
@@ -147,25 +150,58 @@ export default function Customers() {
   const fetchCustomerDetails = async (customerId) => {
     try {
       console.log("Fetching customer details for ID:", customerId); // Debug log
-      setLoadingCustomerDetails(true);
+      setLoadingCustomerDetailsId(customerId);
 
-      // Fetch user details and orders from admin API
-      const ordersResponse = await fetch(
-        `http://localhost:4001/admin/orders/last-orders/${customerId}`
+      // Fetch user details and last orders from admin API (use user endpoint)
+      const userResponse = await fetch(
+        `http://localhost:4001/admin/users/${customerId}`
       );
 
-      console.log("Response status:", ordersResponse.status); // Debug log
+      console.log(
+        "fetchCustomerDetails - response status:",
+        userResponse.status
+      ); // Debug log
 
-      if (ordersResponse.ok) {
-        const ordersResult = await ordersResponse.json();
-        console.log("Backend Response:", ordersResult); // Debug log
+      if (userResponse.ok) {
+        const userResult = await userResponse.json();
+        console.log("fetchCustomerDetails - backend response:", userResult); // Debug log
 
-        if (ordersResult.status === "success" && ordersResult.data) {
-          // Extract user and orders from the backend response
-          const { user, orders } = ordersResult.data;
+        if (userResult.status === "success" && userResult.data) {
+          // Extract user and orders from the user endpoint response (fallback)
+          const { user, orders: userOrders = [] } = userResult.data;
+
+          // Also try fetching last 3 orders from the orders service endpoint and prefer it
+          let orders = userOrders || [];
+          try {
+            const ordersResp = await fetch(
+              `http://localhost:4001/admin/orders/last-orders/${customerId}`
+            );
+            console.log(
+              "fetchCustomerDetails - orders endpoint status:",
+              ordersResp.status
+            );
+            if (ordersResp.ok) {
+              const ordersResult = await ordersResp.json();
+              console.log(
+                "fetchCustomerDetails - orders endpoint response:",
+                ordersResult
+              );
+              if (
+                ordersResult.status === "success" &&
+                ordersResult.data?.orders
+              ) {
+                orders = ordersResult.data.orders;
+              }
+            }
+          } catch (ordErr) {
+            console.warn(
+              "fetchCustomerDetails - orders fetch failed, falling back to user payload:",
+              ordErr
+            );
+          }
 
           // Sort orders by creation date (newest first) and take last 3
-          const sortedOrders = orders
+          const sortedOrders = (orders || [])
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             .slice(0, 3);
 
@@ -196,7 +232,7 @@ export default function Customers() {
           setShowCustomerDetails(true);
           console.log("Modal should be open now"); // Debug log
         } else {
-          console.error("Invalid response format:", ordersResult); // Debug log
+          console.error("Invalid response format:", userResult); // Debug log
           toast({
             variant: "destructive",
             title: "❌ Error",
@@ -207,13 +243,13 @@ export default function Customers() {
       } else {
         console.error(
           "Response not ok:",
-          ordersResponse.status,
-          ordersResponse.statusText
+          userResponse.status,
+          userResponse.statusText
         ); // Debug log
         toast({
           variant: "destructive",
           title: "❌ Error",
-          description: `Failed to fetch customer details (${ordersResponse.status})`,
+          description: `Failed to fetch customer details (${userResponse.status})`,
           className: "bg-red-900/90 border-red-800 text-red-100",
         });
       }
@@ -226,16 +262,24 @@ export default function Customers() {
         className: "bg-red-900/90 border-red-800 text-red-100",
       });
     } finally {
-      setLoadingCustomerDetails(false);
+      setLoadingCustomerDetailsId(null);
     }
   };
 
   const handleStatusUpdate = async (e) => {
     e.preventDefault();
     setErrors({});
-
+    if (
+      !selectedCustomer ||
+      !selectedCustomer.user ||
+      !selectedCustomer.user._id
+    ) {
+      setErrors({ submit: "No customer selected" });
+      return;
+    }
     try {
       setActionLoading(true);
+      setActionTargetId(selectedCustomer.user._id);
       const response = await fetch(
         `http://localhost:4001/admin/users/${selectedCustomer.user._id}/status`,
         {
@@ -253,7 +297,7 @@ export default function Customers() {
         setShowStatusModal(false);
         setSelectedCustomer(null);
         setStatusUpdateForm({
-          isActive: true,
+          isActive: result.data.user.accountStatus === "active",
           reason: "",
         });
         setErrors({});
@@ -272,6 +316,7 @@ export default function Customers() {
           });
         }, 300);
       } else {
+        console.error("Status update failed:", result);
         setErrors({
           submit: result.message || "Failed to update customer status",
         });
@@ -281,6 +326,7 @@ export default function Customers() {
       setErrors({ submit: "Failed to update customer status" });
     } finally {
       setActionLoading(false);
+      setActionTargetId(null);
     }
   };
 
@@ -288,8 +334,18 @@ export default function Customers() {
     e.preventDefault();
     setErrors({});
 
+    if (
+      !selectedCustomer ||
+      !selectedCustomer.user ||
+      !selectedCustomer.user._id
+    ) {
+      setErrors({ submit: "No customer selected" });
+      return;
+    }
+
     try {
       setActionLoading(true);
+      setActionTargetId(selectedCustomer.user._id);
       const response = await fetch(
         `http://localhost:4001/admin/users/${selectedCustomer.user._id}`,
         {
@@ -302,6 +358,7 @@ export default function Customers() {
       );
 
       const result = await response.json();
+      console.log("handleDeleteCustomer - response:", response.status, result);
 
       if (response.ok && result.status === "success") {
         setShowDeleteModal(false);
@@ -330,6 +387,63 @@ export default function Customers() {
       setErrors({ submit: "Failed to delete customer" });
     } finally {
       setActionLoading(false);
+      setActionTargetId(null);
+    }
+  };
+
+  // Quick toggle activation without opening modal
+  const toggleActivation = async (customer) => {
+    const userId = customer._id;
+    // Treat missing/undefined `accountStatus` as active by default; compute current state then toggle
+    const currentlyActive = customer.accountStatus === "active";
+    const makeActive = !currentlyActive; // we want the opposite of current
+    try {
+      setActionLoading(true);
+      setActionTargetId(userId);
+      const response = await fetch(
+        `http://localhost:4001/admin/users/${userId}/status`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            isActive: makeActive,
+            reason: "Toggled by admin",
+          }),
+        }
+      );
+      const result = await response.json();
+      if (response.ok && result.status === "success") {
+        // Optimistically update customers list
+        setCustomers((prev) =>
+          prev.map((c) =>
+            c._id === userId
+              ? { ...c, accountStatus: makeActive ? "active" : "inactive" }
+              : c
+          )
+        );
+        toast({
+          title: "✅ Success",
+          description: `Customer ${
+            makeActive ? "activated" : "deactivated"
+          } successfully`,
+          className: makeActive
+            ? "bg-green-900/90 border-green-800 text-green-100"
+            : "bg-red-900/90 border-red-800 text-red-100",
+        });
+      } else {
+        throw new Error(result.message || "Failed to toggle activation");
+      }
+    } catch (err) {
+      console.error("toggleActivation error:", err);
+      toast({
+        variant: "destructive",
+        title: "❌ Error",
+        description: err.message || "Failed to update status",
+        className: "bg-red-900/90 border-red-800 text-red-100",
+      });
+    } finally {
+      setActionLoading(false);
+      setActionTargetId(null);
     }
   };
 
@@ -380,7 +494,7 @@ export default function Customers() {
   const openStatusModal = (customer) => {
     setSelectedCustomer({ user: customer });
     setStatusUpdateForm({
-      isActive: customer.activated === false ? true : false,
+      isActive: customer.accountStatus === "inactive" ? true : false,
       reason: "",
     });
     setErrors({});
@@ -564,7 +678,8 @@ export default function Customers() {
             },
             {
               label: "Active",
-              value: customers.filter((c) => c.activated !== false).length,
+              value: customers.filter((c) => c.accountStatus === "active")
+                .length,
               icon: UserCheck,
               color: "from-green-600/20 to-green-800/20 border-green-800/30",
               iconColor: "text-green-400",
@@ -572,7 +687,8 @@ export default function Customers() {
             },
             {
               label: "Inactive",
-              value: customers.filter((c) => c.activated === false).length,
+              value: customers.filter((c) => c.accountStatus === "inactive")
+                .length,
               icon: UserX,
               color: "from-red-600/20 to-red-800/20 border-red-800/30",
               iconColor: "text-red-400",
@@ -687,8 +803,8 @@ export default function Customers() {
                         <TableHead className="text-zinc-300 hidden md:table-cell">
                           Contact
                         </TableHead>
-                        <TableHead className="text-zinc-300">Orders</TableHead>
-                        <TableHead className="text-zinc-300">Spent</TableHead>
+                        {/* <TableHead className="text-zinc-300">Orders</TableHead>
+                        <TableHead className="text-zinc-300">Spent</TableHead> */}
                         <TableHead className="text-zinc-300">Status</TableHead>
                         <TableHead className="text-zinc-300 hidden sm:table-cell">
                           Joined
@@ -698,7 +814,7 @@ export default function Customers() {
                     </TableHeader>
                     <TableBody>
                       {customers.map((customer) => {
-                        const isActive = customer.activated !== false;
+                        const isActive = customer.accountStatus === "active";
                         return (
                           <TableRow
                             key={customer._id}
@@ -738,7 +854,7 @@ export default function Customers() {
                                 )}
                               </div>
                             </TableCell>
-                            <TableCell>
+                            {/* <TableCell>
                               <div className="flex items-center gap-1">
                                 <Package className="h-3 w-3 text-zinc-400" />
                                 <span className="text-white">
@@ -750,27 +866,35 @@ export default function Customers() {
                               <span className="font-medium text-white">
                                 ₹{(customer.totalSpent || 0).toLocaleString()}
                               </span>
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell>
-                              <Badge
-                                className={
-                                  isActive
-                                    ? "bg-green-500/20 text-green-300 border-green-500/30"
-                                    : "bg-red-500/20 text-red-300 border-red-500/30"
+                              <button
+                                onClick={() => openStatusModal(customer)}
+                                disabled={
+                                  actionLoading &&
+                                  actionTargetId === customer._id
                                 }
+                                className="rounded"
+                                title={isActive ? "Deactivate" : "Activate"}
                               >
-                                {isActive ? (
-                                  <>
+                                <Badge
+                                  className={
+                                    isActive
+                                      ? "bg-green-500/20 text-green-300 border-green-500/30"
+                                      : "bg-red-500/20 text-red-300 border-red-500/30"
+                                  }
+                                >
+                                  {actionLoading &&
+                                  actionTargetId === customer._id ? (
+                                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                  ) : isActive ? (
                                     <CheckCircle className="h-3 w-3 mr-1" />
-                                    Active
-                                  </>
-                                ) : (
-                                  <>
+                                  ) : (
                                     <XCircle className="h-3 w-3 mr-1" />
-                                    Inactive
-                                  </>
-                                )}
-                              </Badge>
+                                  )}
+                                  {isActive ? "Active" : "Inactive"}
+                                </Badge>
+                              </button>
                             </TableCell>
                             <TableCell className="hidden sm:table-cell">
                               <div className="text-sm text-zinc-400 flex items-center gap-1">
@@ -788,10 +912,12 @@ export default function Customers() {
                                   onClick={() =>
                                     fetchCustomerDetails(customer._id)
                                   }
-                                  disabled={loadingCustomerDetails}
+                                  disabled={
+                                    loadingCustomerDetailsId === customer._id
+                                  }
                                   className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white disabled:opacity-50"
                                 >
-                                  {loadingCustomerDetails ? (
+                                  {loadingCustomerDetailsId === customer._id ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                   ) : (
                                     <Eye className="h-4 w-4" />
@@ -801,16 +927,12 @@ export default function Customers() {
                                   variant="outline"
                                   size="sm"
                                   onClick={() => openStatusModal(customer)}
-                                  className={`border-zinc-700 hover:bg-zinc-700 ${
-                                    isActive
-                                      ? "bg-red-600/20 text-red-300 hover:text-red-200"
-                                      : "bg-green-600/20 text-green-300 hover:text-green-200"
-                                  }`}
+                                  className="border-zinc-700 bg-zinc-800/20 text-zinc-300 hover:bg-zinc-700"
                                 >
                                   {isActive ? (
-                                    <UserX className="h-4 w-4" />
+                                    <UserCheck className="h-4 w-4 text-green-400" />
                                   ) : (
-                                    <UserCheck className="h-4 w-4" />
+                                    <UserX className="h-4 w-4 text-red-400" />
                                   )}
                                 </Button>
                                 <Button
@@ -818,8 +940,17 @@ export default function Customers() {
                                   size="sm"
                                   onClick={() => openDeleteModal(customer)}
                                   className="bg-red-600/20 border-red-700/50 text-red-300 hover:bg-red-600/30 hover:text-red-200"
+                                  disabled={
+                                    actionLoading &&
+                                    actionTargetId === customer._id
+                                  }
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  {actionLoading &&
+                                  actionTargetId === customer._id ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="h-4 w-4" />
+                                  )}
                                 </Button>
                               </div>
                             </TableCell>
@@ -843,7 +974,7 @@ export default function Customers() {
 
       {/* Customer Details Modal */}
       <Dialog open={showCustomerDetails} onOpenChange={setShowCustomerDetails}>
-        <DialogContent className="max-w-6xl max-h-[90vh] bg-zinc-900 border-zinc-800 overflow-hidden flex flex-col">
+        <DialogContent className="w-full h-full sm:max-w-6xl sm:max-h-[90vh] sm:rounded-lg bg-zinc-900 border-zinc-800 pb-1  flex flex-col">
           <DialogHeader className="flex-shrink-0">
             <DialogTitle className="text-xl font-bold text-white font-['Montserrat']">
               Customer Details
@@ -853,7 +984,7 @@ export default function Customers() {
             </DialogDescription>
           </DialogHeader>
           {selectedCustomer && (
-            <div className="flex-1 overflow-y-auto space-y-6 pr-2 scrollbar-thin scrollbar-track-zinc-800 scrollbar-thumb-zinc-600 hover:scrollbar-thumb-zinc-500">
+            <div className="flex-1 overflow-y-auto space-y-6 pr-2">
               {/* Customer Info & Stats Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Personal Information */}
@@ -922,12 +1053,12 @@ export default function Customers() {
                         <span className="text-zinc-400">Status:</span>
                         <Badge
                           className={
-                            selectedCustomer.user.activated !== false
+                            selectedCustomer.user.accountStatus === "active"
                               ? "bg-green-500/20 text-green-300 border-green-500/30"
                               : "bg-red-500/20 text-red-300 border-red-500/30"
                           }
                         >
-                          {selectedCustomer.user.activated !== false
+                          {selectedCustomer.user.accountStatus === "active"
                             ? "Active"
                             : "Inactive"}
                         </Badge>
@@ -1033,49 +1164,54 @@ export default function Customers() {
                 <CardHeader>
                   <CardTitle className="text-lg text-white flex items-center gap-2">
                     <Package className="h-5 w-5 text-green-400" />
-                    Last 3 Orders ({selectedCustomer.orders?.length || 0})
+                    Last 3 Orders (
+                    {Math.min(3, selectedCustomer.orders?.length || 0)} of{" "}
+                    {selectedCustomer.stats?.totalOrders ||
+                      selectedCustomer.orders?.length ||
+                      0}
+                    )
                   </CardTitle>
                   <CardDescription className="text-zinc-400 text-sm">
                     Fetched from admin API • Most recent orders first
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4 max-h-96 overflow-y-auto scrollbar-thin scrollbar-track-zinc-700 scrollbar-thumb-zinc-500 hover:scrollbar-thumb-zinc-400 pr-2">
+                  <div className="space-y-4 pr-2">
                     {selectedCustomer.orders?.length > 0 ? (
-                      selectedCustomer.orders.map((order) => (
+                      selectedCustomer.orders?.slice(0, 3).map((order) => (
                         <div
                           key={order._id}
                           className="p-4 bg-zinc-700/50 rounded-lg border border-zinc-600/50 space-y-3"
                         >
                           {/* Order Header */}
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div className="flex items-center space-x-3 min-w-0">
+                              <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
                                 <Package className="h-5 w-5 text-white" />
                               </div>
-                              <div>
-                                <p className="font-medium text-white">
+                              <div className="min-w-0">
+                                <p className="font-medium text-white truncate">
                                   Order #{order.orderId || order._id.slice(-8)}
                                 </p>
-                                <div className="flex items-center gap-4 text-sm text-zinc-400">
+                                <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 text-sm text-zinc-400 min-w-0">
                                   <span className="flex items-center gap-1">
                                     <Calendar className="h-3 w-3" />
                                     {new Date(
                                       order.createdAt
                                     ).toLocaleDateString()}
                                   </span>
-                                  <span>
+                                  <span className="truncate">
                                     {order.cartItems?.length || 0} items
                                   </span>
                                   {order.paymentMethod && (
-                                    <span className="capitalize">
+                                    <span className="capitalize truncate">
                                       {order.paymentMethod}
                                     </span>
                                   )}
                                 </div>
                               </div>
                             </div>
-                            <div className="text-right">
+                            <div className="text-right mt-2 sm:mt-0 flex-shrink-0">
                               <p className="font-bold text-white text-lg">
                                 ₹{(order.totalPrice || 0)?.toLocaleString()}
                               </p>
@@ -1115,7 +1251,7 @@ export default function Customers() {
                                       key={index}
                                       className="flex items-center justify-between text-sm"
                                     >
-                                      <div className="flex items-center space-x-3">
+                                      <div className="flex items-center space-x-3 min-w-0">
                                         {(item.productId?.images?.[0] ||
                                           item.product?.images?.[0] ||
                                           item.image) && (
@@ -1131,21 +1267,21 @@ export default function Customers() {
                                               item.name ||
                                               item.title
                                             }
-                                            className="w-8 h-8 rounded object-cover"
+                                            className="w-8 h-8 rounded object-cover flex-shrink-0"
                                             onError={(e) => {
                                               e.target.style.display = "none";
                                             }}
                                           />
                                         )}
-                                        <div>
-                                          <p className="text-zinc-300 font-medium">
+                                        <div className="min-w-0">
+                                          <p className="text-zinc-300 font-medium truncate">
                                             {item.productId?.name ||
                                               item.product?.name ||
                                               item.name ||
                                               item.title ||
                                               "Product not found"}
                                           </p>
-                                          <p className="text-zinc-500 text-xs">
+                                          <p className="text-zinc-500 text-xs truncate">
                                             Qty: {item.quantity} × ₹
                                             {(
                                               item.price ||
@@ -1156,7 +1292,7 @@ export default function Customers() {
                                           </p>
                                         </div>
                                       </div>
-                                      <p className="text-zinc-300 font-medium">
+                                      <p className="text-zinc-300 font-medium ml-2 flex-shrink-0">
                                         ₹
                                         {(
                                           item.quantity *
@@ -1178,11 +1314,15 @@ export default function Customers() {
                           )}
 
                           {/* Additional Order Info */}
-                          <div className="border-t border-zinc-600/50 pt-2">
+                          {/* <div className="border-t border-zinc-600/50 pt-2">
                             <div className="flex justify-between items-center text-xs text-zinc-500">
-                              <span>Email: {order.email}</span>
+                              <span className="truncate">
+                                Email: {order.email}
+                              </span>
                               {order.trackingNumber && (
-                                <span>Tracking: {order.trackingNumber}</span>
+                                <span className="truncate">
+                                  Tracking: {order.trackingNumber}
+                                </span>
                               )}
                             </div>
                             {order.adminNotes && (
@@ -1193,7 +1333,7 @@ export default function Customers() {
                                 </p>
                               </div>
                             )}
-                          </div>
+                          </div> */}
                         </div>
                       ))
                     ) : (
@@ -1207,19 +1347,17 @@ export default function Customers() {
                         </p>
                       </div>
                     )}
+
+                    {selectedCustomer.orders?.length > 3 && (
+                      <div className="text-center text-sm text-zinc-400 pt-2">
+                        +{selectedCustomer.orders.length - 3} more orders
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
             </div>
           )}
-          <DialogFooter className="flex-shrink-0 border-t border-zinc-800 pt-4 mt-4">
-            <Button
-              onClick={() => setShowCustomerDetails(false)}
-              className="bg-zinc-700 hover:bg-zinc-600 text-white"
-            >
-              Close
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
 

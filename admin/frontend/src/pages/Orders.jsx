@@ -106,18 +106,68 @@ export default function Orders() {
 
   const getStatusColor = (status) => {
     const statusColors = {
-      Pending: "bg-amber-500/20 text-amber-300 border-amber-500/30",
-      Processing: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-      Shipped: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-      "Out for Delivery":
-        "bg-indigo-500/20 text-indigo-300 border-indigo-500/30",
-      Delivered: "bg-green-500/20 text-green-300 border-green-500/30",
-      Cancelled: "bg-red-500/20 text-red-300 border-red-500/30",
-      Refunded: "bg-gray-500/20 text-gray-300 border-gray-500/30",
+      Pending: "!bg-amber-500 !text-white !border-amber-600",
+      Processing: "!bg-blue-600 !text-white !border-blue-700",
+      Shipped: "!bg-purple-600 !text-white !border-purple-700",
+      "Out for Delivery": "!bg-indigo-600 !text-white !border-indigo-700",
+      Delivered: "!bg-green-600 !text-white !border-green-700",
+      Cancelled: "!bg-red-600 !text-white !border-red-700",
+      Refunded: "!bg-gray-600 !text-white !border-gray-700",
     };
-    return (
-      statusColors[status] || "bg-zinc-500/20 text-zinc-300 border-zinc-500/30"
-    );
+    return statusColors[status] || "!bg-zinc-700 !text-white !border-zinc-600";
+  };
+
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case "Pending":
+        return {
+          backgroundColor: "#f59e0b",
+          color: "#ffffff",
+          borderColor: "#d97706",
+        };
+      case "Processing":
+        return {
+          backgroundColor: "#2563eb",
+          color: "#ffffff",
+          borderColor: "#1d4ed8",
+        };
+      case "Shipped":
+        return {
+          backgroundColor: "#7c3aed",
+          color: "#ffffff",
+          borderColor: "#6d28d9",
+        };
+      case "Out for Delivery":
+        return {
+          backgroundColor: "#4f46e5",
+          color: "#ffffff",
+          borderColor: "#4338ca",
+        };
+      case "Delivered":
+        return {
+          backgroundColor: "#16a34a",
+          color: "#ffffff",
+          borderColor: "#15803d",
+        };
+      case "Cancelled":
+        return {
+          backgroundColor: "#dc2626",
+          color: "#ffffff",
+          borderColor: "#b91c1c",
+        };
+      case "Refunded":
+        return {
+          backgroundColor: "#4b5563",
+          color: "#ffffff",
+          borderColor: "#374151",
+        };
+      default:
+        return {
+          backgroundColor: "#374151",
+          color: "#ffffff",
+          borderColor: "#1f2937",
+        };
+    }
   };
 
   const getStatusIcon = (status) => {
@@ -486,8 +536,8 @@ export default function Orders() {
 
         {/* Search and Filters */}
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="relative flex-1 max-w-md">
+          <div className="flex flex-row flex-wrap gap-4 items-center justify-between">
+            <div className="relative flex-1 min-w-0 max-w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 h-4 w-4" />
               <Input
                 placeholder="Search orders by customer, items, or order ID..."
@@ -496,7 +546,7 @@ export default function Orders() {
                 className="pl-10 bg-zinc-800/50 border-zinc-700 text-white placeholder:text-zinc-400"
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger className="w-40 bg-zinc-800/50 border-zinc-700 text-white">
                   <SelectValue placeholder="Filter by status" />
@@ -556,15 +606,18 @@ export default function Orders() {
                     <TableHeader>
                       <TableRow className="border-zinc-800">
                         <TableHead className="text-zinc-300">
-                          Order ID
+                          <span className="sm:hidden">ID</span>
+                          <span className="hidden sm:inline">Order ID</span>
                         </TableHead>
-                        <TableHead className="text-zinc-300">
+                        <TableHead className="text-zinc-300 hidden sm:table-cell">
                           Customer
                         </TableHead>
                         <TableHead className="text-zinc-300 hidden md:table-cell">
                           Items
                         </TableHead>
-                        <TableHead className="text-zinc-300">Amount</TableHead>
+                        <TableHead className="text-zinc-300 hidden sm:table-cell">
+                          Amount
+                        </TableHead>
                         <TableHead className="text-zinc-300">Status</TableHead>
                         <TableHead className="text-zinc-300 hidden sm:table-cell">
                           Date
@@ -578,14 +631,18 @@ export default function Orders() {
                         return (
                           <TableRow
                             key={order.orderId}
-                            className="border-zinc-800 hover:bg-zinc-800/30"
+                            className="border-zinc-800"
                           >
-                            <TableCell>
-                              <div className="font-mono text-sm text-zinc-300">
-                                #{order.orderId?.slice(-8)}
-                              </div>
+                            <TableCell className="font-medium text-white">
+                              <span className="sm:hidden">
+                                {order.orderId?.slice(-8)}
+                              </span>
+                              <span className="hidden sm:inline">
+                                {order.orderId}
+                              </span>
                             </TableCell>
-                            <TableCell>
+
+                            <TableCell className="hidden sm:table-cell">
                               <div className="flex items-center space-x-3">
                                 <div className="w-8 h-8 bg-zinc-800 rounded-full flex items-center justify-center">
                                   <User className="h-4 w-4 text-zinc-500" />
@@ -594,41 +651,44 @@ export default function Orders() {
                                   <p className="font-medium text-white text-sm">
                                     {order.email}
                                   </p>
-                                  <p className="text-xs text-zinc-400">
-                                    Customer
-                                  </p>
                                 </div>
                               </div>
                             </TableCell>
+
                             <TableCell className="hidden md:table-cell">
                               <div className="text-sm text-zinc-300">
                                 {order.cartItems?.length || 0} item(s)
                               </div>
                             </TableCell>
-                            <TableCell>
+
+                            <TableCell className="hidden sm:table-cell">
                               <span className="font-medium text-white">
                                 ₹{order.totalPrice}
                               </span>
                             </TableCell>
+
                             <TableCell>
                               <Badge
+                                style={getStatusStyle(order.orderStatus)}
                                 className={getStatusColor(order.orderStatus)}
                               >
                                 <StatusIcon className="h-3 w-3 mr-1" />
                                 {order.orderStatus}
                               </Badge>
                             </TableCell>
+
                             <TableCell className="hidden sm:table-cell">
                               <div className="text-sm text-zinc-400">
                                 {new Date(order.createdAt).toLocaleDateString()}
                               </div>
                             </TableCell>
+
                             <TableCell>
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => openOrderDetails(order)}
-                                className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white"
+                                className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700 hover:text-white inline-flex items-center gap-1 disabled:opacity-50"
                               >
                                 <Eye className="h-4 w-4 mr-1" />
                                 View
@@ -654,7 +714,7 @@ export default function Orders() {
 
       {/* Order Details Modal */}
       <Dialog open={showOrderDetails} onOpenChange={setShowOrderDetails}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-zinc-900 border-zinc-800">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-zinc-900 border-zinc-800 sm:m-4">
           <DialogHeader>
             <DialogTitle className="text-white font-['Montserrat']">
               Order Details
@@ -730,6 +790,7 @@ export default function Orders() {
                         Current Status
                       </p>
                       <Badge
+                        style={getStatusStyle(selectedOrder.orderStatus)}
                         className={getStatusColor(selectedOrder.orderStatus)}
                       >
                         {selectedOrder.orderStatus}
@@ -782,7 +843,7 @@ export default function Orders() {
               </Card>
 
               {/* Status Update Form */}
-              <Card className="bg-gradient-to-br from-orange-600/10 to-orange-800/10 border-orange-800/30">
+              <Card className="">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-white text-lg flex items-center gap-2">
                     <RefreshCw className="h-5 w-5 text-orange-400" />
@@ -870,7 +931,7 @@ export default function Orders() {
                             })
                           }
                           placeholder="Enter tracking number"
-                          className="bg-zinc-800/80 border-orange-700/50 text-white focus:border-orange-500"
+                          className="bg-zinc-800/80 text-white"
                         />
                       </div>
                     </div>
@@ -892,7 +953,7 @@ export default function Orders() {
                               })
                             }
                             placeholder="Enter refund amount"
-                            className="bg-zinc-800/80 border-red-700/50 text-white focus:border-red-500"
+                            className="bg-zinc-800/80 text-white"
                           />
                           {errors.refundAmount && (
                             <p className="text-red-300 text-xs mt-1 flex items-center gap-1">
@@ -915,7 +976,7 @@ export default function Orders() {
                               })
                             }
                             placeholder="Enter reason for refund"
-                            className="bg-zinc-800/80 border-red-700/50 text-white focus:border-red-500"
+                            className="bg-zinc-800/80 text-white "
                             rows={3}
                           />
                           {errors.refundReason && (
@@ -941,7 +1002,7 @@ export default function Orders() {
                           })
                         }
                         placeholder="Add any notes about this status update"
-                        className="bg-zinc-800/80 border-orange-700/50 text-white focus:border-orange-500"
+                        className="bg-zinc-800/80 text-white"
                         rows={3}
                       />
                     </div>

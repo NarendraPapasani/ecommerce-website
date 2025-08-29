@@ -11,7 +11,7 @@ import Cookies from "js-cookie";
 
 const WishlistProductCard = ({ product, className, onRemove }) => {
   const { toast } = useToast();
-  const { _id, title, price, images, rating, category } = product;
+  const { _id, title, price, images, rating, category, stock } = product;
   const navigate = useNavigate();
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
@@ -25,6 +25,8 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
       category?.slug ||
       category?.name ||
       "general";
+    // Don't navigate from card if product is out of stock (Quick View still works)
+    if (stock === 0) return;
     navigate(`/product/${categorySlug}/${_id}`);
     window.scrollTo(0, 0);
   };
@@ -32,13 +34,23 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
   const handleAddToCart = async (e) => {
     e.stopPropagation();
 
+    // Prevent adding to cart when out of stock
+    if (stock === 0) {
+      toast({
+        title: "Out of stock",
+        description: "This product is currently out of stock",
+        variant: "destructive",
+        className: "bg-red-600 border-red-600 text-white",
+      });
+      return;
+    }
+
     if (!jwt) {
       toast({
         title: "Authentication Required",
         description: "Please login to add items to cart",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        
       });
       navigate("/login");
       return;
@@ -68,7 +80,6 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
         description: `${title} added to cart!`,
         variant: "default",
         className: "bg-green-600 border-green-600 text-white",
-        
       });
     } catch (error) {
       toast({
@@ -76,7 +87,6 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
         description: "Failed to add to cart",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        
       });
       console.error("Error adding to cart:", error);
     } finally {
@@ -93,7 +103,6 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
         description: "Please login to manage wishlist",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        
       });
       navigate("/login");
       return;
@@ -117,7 +126,6 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
         description: `${title} removed from wishlist!`,
         variant: "default",
         className: "bg-green-600 border-green-600 text-white",
-        
       });
 
       // Call the parent callback to refresh the wishlist
@@ -130,7 +138,6 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
         description: "Failed to remove from wishlist",
         variant: "destructive",
         className: "bg-red-600 border-red-600 text-white",
-        
       });
       console.error("Error removing from wishlist:", error);
     } finally {
@@ -202,12 +209,30 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
           loading="lazy"
         />
 
-        {/* Overlay on hover */}
-        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+        {/* Overlay on hover; if out-of-stock show overlay but keep it non-blocking so Quick View works */}
+        <div
+          className={cn(
+            "absolute inset-0 transition-opacity duration-300 flex items-center justify-center pointer-events-none",
+            stock === 0
+              ? "bg-black/60 opacity-100"
+              : "bg-black/60 opacity-0 group-hover:opacity-100"
+          )}
+        >
           <Button
             variant="secondary"
             size="sm"
-            className="bg-white/90 text-black hover:bg-white"
+            onClick={(e) => {
+              e.stopPropagation();
+              const categorySlug =
+                category?.[0]?.slug ||
+                category?.[0]?.name ||
+                category?.slug ||
+                category?.name ||
+                "general";
+              navigate(`/product/${categorySlug}/${_id}`);
+              window.scrollTo(0, 0);
+            }}
+            className="bg-white/90 text-black hover:bg-white pointer-events-auto"
           >
             <Eye className="h-4 w-4 mr-2" />
             Quick View
@@ -242,11 +267,15 @@ const WishlistProductCard = ({ product, className, onRemove }) => {
           <Button
             size="sm"
             onClick={handleAddToCart}
-            disabled={isAddingToCart}
+            disabled={isAddingToCart || stock === 0}
             className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:scale-100"
           >
             <ShoppingCart className="h-4 w-4 mr-1" />
-            {isAddingToCart ? "Adding..." : "Add"}
+            {isAddingToCart
+              ? "Adding..."
+              : stock === 0
+              ? "Out of stock"
+              : "Add"}
           </Button>
         </div>
       </CardContent>

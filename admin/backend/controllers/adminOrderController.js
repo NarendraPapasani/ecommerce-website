@@ -4,10 +4,9 @@ const Order = require(path.join(
   "../../../server/models/orderModel"
 ));
 const User = require(path.join(__dirname, "../../../server/models/userModel"));
-const { sendOrderStatusUpdateEmail } = require(path.join(
-  __dirname,
-  "../../../server/lib/utils/emailService"
-));
+const {
+  sendOrderStatusUpdateEmail,
+} = require("../../../server/lib/utils/emailService");
 const PDFDocument = require("pdfkit");
 const fs = require("fs");
 

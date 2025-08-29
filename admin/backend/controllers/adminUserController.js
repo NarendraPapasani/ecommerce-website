@@ -207,7 +207,7 @@ const updateUserStatus = async (req, res) => {
     }
 
     const updateData = {
-      activated: isActive,
+      accountStatus: isActive ? "active" : "inactive",
       updatedAt: new Date(),
     };
 
@@ -227,7 +227,7 @@ const updateUserStatus = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    await res.status(200).json({
       status: "success",
       message: `User ${isActive ? "activated" : "deactivated"} successfully`,
       data: { user: updatedUser },
@@ -379,7 +379,7 @@ const getUserAnalytics = async (req, res) => {
       { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } },
     ]);
 
-    // Top customers by total spent (with user details)
+    // Top customers by total spent (new order model) — include user details when available
     const topCustomers = await Order.aggregate([
       { $unwind: "$orders" },
       { $match: { "orders.orderStatus": { $nin: ["Cancelled"] } } },
@@ -392,6 +392,7 @@ const getUserAnalytics = async (req, res) => {
       },
       { $sort: { totalSpent: -1 } },
       { $limit: 10 },
+      // Lookup user document by email to get firstName/lastName and userId (if the order email matches a registered user)
       {
         $lookup: {
           from: "users",
@@ -401,6 +402,20 @@ const getUserAnalytics = async (req, res) => {
         },
       },
       { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          _id: 0,
+          email: "$_id",
+          user: {
+            _id: "$user._id",
+            firstName: "$user.firstName",
+            lastName: "$user.lastName",
+            email: "$user.email",
+          },
+          totalSpent: 1,
+          orderCount: 1,
+        },
+      },
     ]);
 
     // User activity stats (new order model)

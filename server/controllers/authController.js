@@ -24,6 +24,12 @@ const googleAuth = async (req, res) => {
     let user = await User.findOne({ email });
 
     if (user) {
+      // Block login if account is inactive or suspended
+      if (user.accountStatus && user.accountStatus !== "active") {
+        return res
+          .status(403)
+          .json({ msg: "Account deactivated", success: false });
+      }
       // User exists - update Google info if not already set
       if (!user.googleId) {
         user.googleId = googleId;
@@ -409,6 +415,11 @@ const login = async (req, res) => {
       return res
         .status(404)
         .json({ msg: "No account found with this email address" });
+    }
+
+    // Block login if account is inactive or suspended
+    if (user.accountStatus && user.accountStatus !== "active") {
+      return res.status(403).json({ msg: "Account deactivated" });
     }
 
     // Check if user only has Google auth (no password set)

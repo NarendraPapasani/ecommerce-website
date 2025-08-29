@@ -24,8 +24,6 @@ const getAllProducts = async (req, res) => {
       category,
       minPrice,
       maxPrice,
-      minStock,
-      maxStock,
       sortBy = "createdAt",
       sortOrder = "desc",
     } = req.query;
@@ -41,38 +39,14 @@ const getAllProducts = async (req, res) => {
       ];
     }
 
-    // Handle multiple categories
-    const categoryParams = Array.isArray(category)
-      ? category
-      : category
-      ? [category]
-      : [];
-    if (categoryParams.length > 0) {
-      filter.$or = filter.$or || [];
-      const categoryFilter = {
-        $or: categoryParams.map((cat) => ({
-          "category.name": { $regex: cat, $options: "i" },
-        })),
-      };
-
-      if (filter.$or.length > 0) {
-        filter.$and = [{ $or: filter.$or }, categoryFilter];
-        delete filter.$or;
-      } else {
-        filter.$or = categoryFilter.$or;
-      }
+    if (category) {
+      filter["category.name"] = { $regex: category, $options: "i" };
     }
 
     if (minPrice || maxPrice) {
       filter.price = {};
       if (minPrice) filter.price.$gte = parseFloat(minPrice);
       if (maxPrice) filter.price.$lte = parseFloat(maxPrice);
-    }
-
-    if (minStock || maxStock) {
-      filter.stock = {};
-      if (minStock) filter.stock.$gte = parseInt(minStock);
-      if (maxStock) filter.stock.$lte = parseInt(maxStock);
     }
 
     // Calculate pagination

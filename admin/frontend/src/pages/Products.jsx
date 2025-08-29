@@ -9,6 +9,15 @@ import {
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
+// Simple Label component (avoid importing SelectLabel from radix which must be used inside SelectGroup)
+const Label = ({ htmlFor, children, className = "" }) => (
+  <label
+    htmlFor={htmlFor}
+    className={`block text-sm font-medium mb-2 text-white ${className}`}
+  >
+    {children}
+  </label>
+);
 import {
   Dialog,
   DialogContent,
@@ -51,6 +60,7 @@ import {
 } from "../components/ui/select";
 import { Badge } from "../components/ui/badge";
 import { Toaster } from "../components/ui/toaster";
+import ImageUploader from "../components/ImageUploader";
 import { toast } from "../hooks/use-toast";
 import {
   Package,
@@ -92,7 +102,8 @@ export default function Products() {
   const [productToDelete, setProductToDelete] = useState(null);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [imageLoading, setImageLoading] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState("");
+  // use 'all' as a sentinel for no category filter (radix Select disallows empty string values)
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("desc");
   const [minPrice, setMinPrice] = useState("");
@@ -136,7 +147,8 @@ export default function Products() {
       });
 
       if (searchTerm) params.append("search", searchTerm);
-      if (selectedCategory) params.append("category", selectedCategory);
+      if (selectedCategory && selectedCategory !== "all")
+        params.append("category", selectedCategory);
       if (minPrice) params.append("minPrice", minPrice);
       if (maxPrice) params.append("maxPrice", maxPrice);
 
@@ -458,7 +470,7 @@ export default function Products() {
 
   const clearFilters = () => {
     setSearchTerm("");
-    setSelectedCategory("");
+    setSelectedCategory("all");
     setMinPrice("");
     setMaxPrice("");
     setSortBy("createdAt");
@@ -495,13 +507,13 @@ export default function Products() {
     }
 
     return (
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-zinc-400">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="text-sm text-zinc-400 text-center sm:text-left w-full sm:w-auto">
           Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
           {Math.min(currentPage * itemsPerPage, totalProducts)} of{" "}
           {totalProducts} products
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <Button
             variant="outline"
             size="sm"
@@ -609,7 +621,7 @@ export default function Products() {
                   Products Management
                 </h1>
                 <p className="text-sm sm:text-base text-zinc-400 font-['Montserrat']">
-                  Manage your product catalog, inventory, and pricing
+                  Manage your product catalog and pricing
                 </p>
               </div>
             </div>
@@ -619,6 +631,7 @@ export default function Products() {
                   <Button
                     variant="outline"
                     size="sm"
+                    disabled={true}
                     className="border-zinc-700 hover:border-zinc-600 bg-zinc-800/50 text-zinc-300 hover:text-white hover:bg-zinc-700/50 transition-all duration-200"
                   >
                     <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
@@ -676,227 +689,229 @@ export default function Products() {
                 <DialogTrigger asChild>
                   <Button
                     size="sm"
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0 shadow-lg transition-all duration-200"
+                    className="bg-blue-600 text-white border-0 shadow-lg transition-all duration-200"
                   >
                     <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
                     <span className="text-xs sm:text-sm">Add Product</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-zinc-900 border-zinc-800 max-w-3xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle className="text-white font-['Montserrat']">
-                      Add New Product
-                    </DialogTitle>
-                    <DialogDescription className="text-zinc-400 font-['Montserrat']">
-                      Fill in the product details below
-                    </DialogDescription>
-                  </DialogHeader>
-                  <form onSubmit={handleAddProduct} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-2 text-white">
-                          Product Title *
-                        </label>
-                        <Input
-                          value={formData.title}
-                          onChange={(e) =>
-                            setFormData({ ...formData, title: e.target.value })
-                          }
-                          className="bg-zinc-800 border-zinc-700 text-white"
-                          placeholder="Enter product title"
-                          required
-                        />
-                        {formErrors.title && (
-                          <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                            <AlertCircle className="h-3 w-3" />
-                            {formErrors.title}
-                          </p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-2 text-white">
-                          Price *
-                        </label>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          value={formData.price}
-                          onChange={(e) =>
-                            setFormData({ ...formData, price: e.target.value })
-                          }
-                          className="bg-zinc-800 border-zinc-700 text-white"
-                          placeholder="0.00"
-                          required
-                        />
-                        {formErrors.price && (
-                          <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                            <AlertCircle className="h-3 w-3" />
-                            {formErrors.price}
-                          </p>
-                        )}
-                      </div>
-                    </div>
+                <DialogContent className="bg-[#0b1020] border-[#1f2a44] max-w-3xl rounded-xl shadow-xl p-0">
+                  <div className="flex flex-col max-h-[90vh] sm:max-h-[80vh]">
+                    <DialogHeader className="p-6 pb-0">
+                      <DialogTitle className="text-white font-['Montserrat']">
+                        Add New Product
+                      </DialogTitle>
+                      <DialogDescription className="text-zinc-400 font-['Montserrat']">
+                        Fill in the product details below
+                      </DialogDescription>
+                    </DialogHeader>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-2 text-white">
-                          Category *
-                        </label>
-                        <Select
-                          value={formData.category}
-                          onValueChange={(value) =>
-                            setFormData({ ...formData, category: value })
-                          }
+                    <form
+                      onSubmit={handleAddProduct}
+                      className="flex flex-col flex-1 min-h-0"
+                    >
+                      <div className="p-6 space-y-4 overflow-y-auto min-h-0">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium mb-2 text-white">
+                              Product Title *
+                            </label>
+                            <Input
+                              value={formData.title}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  title: e.target.value,
+                                })
+                              }
+                              className="bg-zinc-800 border-zinc-700 text-white"
+                              placeholder="Enter product title"
+                              required
+                            />
+                            {formErrors.title && (
+                              <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                                <AlertCircle className="h-3 w-3" />
+                                {formErrors.title}
+                              </p>
+                            )}
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-2 text-white">
+                              Price *
+                            </label>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              value={formData.price}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  price: e.target.value,
+                                })
+                              }
+                              className="bg-zinc-800 border-zinc-700 text-white"
+                              placeholder="0.00"
+                              required
+                            />
+                            {formErrors.price && (
+                              <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                                <AlertCircle className="h-3 w-3" />
+                                {formErrors.price}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium mb-2 text-white">
+                              Category *
+                            </label>
+                            <Select
+                              value={formData.category}
+                              onValueChange={(value) =>
+                                setFormData({ ...formData, category: value })
+                              }
+                            >
+                              <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                                <SelectValue placeholder="Select category" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {categories.map((category) => {
+                                  const label =
+                                    typeof category === "string"
+                                      ? category
+                                      : category.name ||
+                                        category.slug ||
+                                        category._id;
+                                  return (
+                                    <SelectItem key={label} value={label}>
+                                      {label}
+                                    </SelectItem>
+                                  );
+                                })}
+                                <SelectItem value="Electronics">
+                                  Electronics
+                                </SelectItem>
+                                <SelectItem value="Clothing">
+                                  Clothing
+                                </SelectItem>
+                                <SelectItem value="Books">Books</SelectItem>
+                                <SelectItem value="Home & Garden">
+                                  Home & Garden
+                                </SelectItem>
+                                <SelectItem value="Sports">Sports</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            {formErrors.category && (
+                              <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                                <AlertCircle className="h-3 w-3" />
+                                {formErrors.category}
+                              </p>
+                            )}
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium mb-2 text-white">
+                              Stock Quantity *
+                            </label>
+                            <Input
+                              type="number"
+                              value={formData.stock}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  stock: e.target.value,
+                                })
+                              }
+                              className="bg-zinc-800 border-zinc-700 text-white"
+                              placeholder="0"
+                              required
+                            />
+                            {formErrors.stock && (
+                              <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                                <AlertCircle className="h-3 w-3" />
+                                {formErrors.stock}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-white">
+                            Description *
+                          </label>
+                          <Textarea
+                            value={formData.description}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                description: e.target.value,
+                              })
+                            }
+                            className="bg-zinc-800 border-zinc-700 text-white"
+                            placeholder="Enter product description"
+                            rows={3}
+                            required
+                          />
+                          {formErrors.description && (
+                            <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                              <AlertCircle className="h-3 w-3" />
+                              {formErrors.description}
+                            </p>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-sm font-medium mb-2 text-white">
+                            Product Images
+                          </label>
+                          <div className="max-h-48 sm:max-h-56 overflow-auto rounded-md">
+                            <ImageUploader
+                              onFilesSelected={(files) =>
+                                handleImageUpload({ target: { files } })
+                              }
+                              images={uploadedImages}
+                              onRemove={removeImage}
+                              disabled={imageLoading}
+                            />
+                          </div>
+                          {imageUploadStatus && (
+                            <p className="text-sm mt-2 text-zinc-300">
+                              {imageUploadStatus}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <DialogFooter className="flex-shrink-0 p-4 pt-0 flex justify-end gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            setShowAddModal(false);
+                            resetForm();
+                          }}
+                          className="bg-zinc-800 border-zinc-700 hover:bg-zinc-700"
                         >
-                          <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                            <SelectValue placeholder="Select category" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {categories.map((category) => (
-                              <SelectItem key={category} value={category}>
-                                {category}
-                              </SelectItem>
-                            ))}
-                            <SelectItem value="Electronics">
-                              Electronics
-                            </SelectItem>
-                            <SelectItem value="Clothing">Clothing</SelectItem>
-                            <SelectItem value="Books">Books</SelectItem>
-                            <SelectItem value="Home & Garden">
-                              Home & Garden
-                            </SelectItem>
-                            <SelectItem value="Sports">Sports</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        {formErrors.category && (
-                          <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                            <AlertCircle className="h-3 w-3" />
-                            {formErrors.category}
-                          </p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium mb-2 text-white">
-                          Stock Quantity *
-                        </label>
-                        <Input
-                          type="number"
-                          value={formData.stock}
-                          onChange={(e) =>
-                            setFormData({ ...formData, stock: e.target.value })
-                          }
-                          className="bg-zinc-800 border-zinc-700 text-white"
-                          placeholder="0"
-                          required
-                        />
-                        {formErrors.stock && (
-                          <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                            <AlertCircle className="h-3 w-3" />
-                            {formErrors.stock}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-white">
-                        Description *
-                      </label>
-                      <Textarea
-                        value={formData.description}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            description: e.target.value,
-                          })
-                        }
-                        className="bg-zinc-800 border-zinc-700 text-white"
-                        placeholder="Enter product description"
-                        rows={3}
-                        required
-                      />
-                      {formErrors.description && (
-                        <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                          <AlertCircle className="h-3 w-3" />
-                          {formErrors.description}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-white">
-                        Product Images
-                      </label>
-                      <Input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="bg-zinc-800 border-zinc-700 text-white"
-                        disabled={imageLoading}
-                      />
-                      {imageLoading && (
-                        <div className="flex items-center gap-2 mt-2 text-sm text-zinc-400">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Uploading images...
-                        </div>
-                      )}
-                      {imageUploadStatus && (
-                        <p className="text-sm mt-2 text-zinc-300">
-                          {imageUploadStatus}
-                        </p>
-                      )}
-
-                      {uploadedImages.length > 0 && (
-                        <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                          {uploadedImages.map((image, index) => (
-                            <div key={index} className="relative">
-                              <img
-                                src={image}
-                                alt={`Upload ${index + 1}`}
-                                className="w-full h-20 object-cover rounded-lg"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => removeImage(index)}
-                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                              >
-                                <X className="w-3 h-3" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    <DialogFooter>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => {
-                          setShowAddModal(false);
-                          resetForm();
-                        }}
-                        className="bg-zinc-800 border-zinc-700 hover:bg-zinc-700"
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        type="submit"
-                        disabled={actionLoading}
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        {actionLoading ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Adding...
-                          </>
-                        ) : (
-                          "Add Product"
-                        )}
-                      </Button>
-                    </DialogFooter>
-                  </form>
+                          Cancel
+                        </Button>
+                        <Button
+                          type="submit"
+                          disabled={actionLoading}
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          {actionLoading ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Adding...
+                            </>
+                          ) : (
+                            "Add Product"
+                          )}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </div>
                 </DialogContent>
               </Dialog>
             </div>
@@ -904,7 +919,7 @@ export default function Products() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+        <div className="grid grid-cols-3 gap-4 lg:gap-6">
           <Card className="bg-gradient-to-br from-blue-600/20 to-blue-800/20 border-blue-800/30">
             <CardContent className="p-4 lg:p-6">
               <div className="flex items-center justify-between">
@@ -956,8 +971,8 @@ export default function Products() {
 
         {/* Search and Filter */}
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="relative flex-1 max-w-md">
+          <div className="flex flex-row flex-wrap gap-4 items-center justify-between">
+            <div className="relative flex-1 min-w-0 max-w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 h-4 w-4" />
               <Input
                 placeholder="Search products..."
@@ -966,7 +981,7 @@ export default function Products() {
                 className="pl-10 bg-zinc-800/50 border-zinc-700 text-white placeholder:text-zinc-400"
               />
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 shrink-0">
               <Button
                 variant="outline"
                 size="sm"
@@ -976,7 +991,10 @@ export default function Products() {
                 <SlidersHorizontal className="h-4 w-4 mr-2" />
                 Filters
               </Button>
-              {(searchTerm || selectedCategory || minPrice || maxPrice) && (
+              {(searchTerm ||
+                selectedCategory !== "all" ||
+                minPrice ||
+                maxPrice) && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -1005,12 +1023,18 @@ export default function Products() {
                         <SelectValue placeholder="All Categories" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">All Categories</SelectItem>
-                        {categories.map((category) => (
-                          <SelectItem key={category} value={category}>
-                            {category}
-                          </SelectItem>
-                        ))}
+                        <SelectItem value="all">All Categories</SelectItem>
+                        {categories.map((category) => {
+                          const label =
+                            typeof category === "string"
+                              ? category
+                              : category.name || category.slug || category._id;
+                          return (
+                            <SelectItem key={label} value={label}>
+                              {label}
+                            </SelectItem>
+                          );
+                        })}
                       </SelectContent>
                     </Select>
                   </div>
@@ -1167,7 +1191,7 @@ export default function Products() {
                           </TableCell>
                           <TableCell>
                             <span className="font-medium text-white">
-                              ${product.price}
+                              ₹{product.price}
                             </span>
                           </TableCell>
                           <TableCell className="hidden sm:table-cell">
@@ -1234,265 +1258,281 @@ export default function Products() {
           if (!open) resetForm();
         }}
       >
-        <DialogContent className="bg-zinc-950 border-zinc-800 max-w-3xl rounded-xl shadow-2xl p-0 overflow-hidden">
-          <DialogHeader className="p-6 pb-0">
-            <DialogTitle className="text-white font-bold text-2xl font-['Montserrat']">
-              Edit Product
-            </DialogTitle>
-            <DialogDescription className="text-zinc-400 font-['Montserrat']">
-              Update the product details below
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleEditProduct} className="p-6 pt-2 space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Input
-                  label="Product Title *"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  placeholder="Enter product title"
-                  required
-                  className="shadecn-input"
-                />
-                {formErrors.title && (
-                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3" />
-                    {formErrors.title}
-                  </p>
-                )}
-              </div>
-              <div>
-                <Input
-                  label="Price *"
-                  type="number"
-                  step="0.01"
-                  value={formData.price}
-                  onChange={(e) =>
-                    setFormData({ ...formData, price: e.target.value })
-                  }
-                  placeholder="0.00"
-                  required
-                  className="shadecn-input"
-                />
-                {formErrors.price && (
-                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3" />
-                    {formErrors.price}
-                  </p>
-                )}
-              </div>
-            </div>
+        <DialogContent className="bg-[#0b1020] border-[#1f2a44] max-w-full sm:max-w-3xl rounded-xl shadow-2xl p-0">
+          <div className="flex flex-col max-h-[100vh] sm:max-h-[100vh]">
+            <DialogHeader className="p-6 pb-0">
+              <DialogTitle className="text-white font-bold text-2xl font-['Montserrat']">
+                Edit Product
+              </DialogTitle>
+              <DialogDescription className="text-zinc-400 font-['Montserrat']">
+                Update the product details below
+              </DialogDescription>
+            </DialogHeader>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Select
-                  value={formData.category}
-                  onValueChange={(value) =>
-                    setFormData({ ...formData, category: value })
-                  }
+            <form
+              onSubmit={handleEditProduct}
+              className="flex flex-col flex-1 min-h-0"
+            >
+              <div className="p-6 pt-2 space-y-6 overflow-y-auto min-h-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="title">Product Title *</Label>
+                    <Input
+                      id="title"
+                      label="Product Title *"
+                      value={formData.title}
+                      onChange={(e) =>
+                        setFormData({ ...formData, title: e.target.value })
+                      }
+                      placeholder="Enter product title"
+                      required
+                      className="shadecn-input"
+                    />
+                    {formErrors.title && (
+                      <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {formErrors.title}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <Label htmlFor="price">Price *</Label>
+                    <Input
+                      id="price"
+                      label="Price *"
+                      type="number"
+                      step="0.01"
+                      value={formData.price}
+                      onChange={(e) =>
+                        setFormData({ ...formData, price: e.target.value })
+                      }
+                      placeholder="0.00"
+                      required
+                      className="shadecn-input"
+                    />
+                    {formErrors.price && (
+                      <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {formErrors.price}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="category">Category *</Label>
+                    <Select
+                      id="category"
+                      value={formData.category}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, category: value })
+                      }
+                    >
+                      <SelectTrigger className="shadecn-input">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map((category) => {
+                          const label =
+                            typeof category === "string"
+                              ? category
+                              : category.name || category.slug || category._id;
+                          return (
+                            <SelectItem key={label} value={label}>
+                              {label}
+                            </SelectItem>
+                          );
+                        })}
+                        <SelectItem value="Electronics">Electronics</SelectItem>
+                        <SelectItem value="Clothing">Clothing</SelectItem>
+                        <SelectItem value="Books">Books</SelectItem>
+                        <SelectItem value="Home & Garden">
+                          Home & Garden
+                        </SelectItem>
+                        <SelectItem value="Sports">Sports</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {formErrors.category && (
+                      <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {formErrors.category}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <Label htmlFor="stock">Stock Quantity *</Label>
+                    <Input
+                      id="stock"
+                      label="Stock Quantity *"
+                      type="number"
+                      value={formData.stock}
+                      onChange={(e) =>
+                        setFormData({ ...formData, stock: e.target.value })
+                      }
+                      placeholder="0"
+                      required
+                      className="shadecn-input"
+                    />
+                    {formErrors.stock && (
+                      <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                        <AlertCircle className="h-3 w-3" />
+                        {formErrors.stock}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="description">Description *</Label>
+                  <Textarea
+                    id="description"
+                    label="Description *"
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, description: e.target.value })
+                    }
+                    placeholder="Enter product description"
+                    rows={3}
+                    required
+                    className="shadecn-input bg-inherit"
+                  />
+                  {formErrors.description && (
+                    <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {formErrors.description}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="images">Product Images</Label>
+                  <div className="max-h-48 sm:max-h-56 overflow-auto rounded-md">
+                    <ImageUploader
+                      id="images"
+                      onFilesSelected={(files) =>
+                        handleImageUpload({ target: { files } })
+                      }
+                      images={uploadedImages}
+                      onRemove={removeImage}
+                      disabled={imageLoading}
+                    />
+                  </div>
+                  {imageUploadStatus && (
+                    <p className="text-sm mt-2 text-zinc-300">
+                      {imageUploadStatus}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <DialogFooter className="flex-shrink-0 p-4 pt-0 flex justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowEditModal(false);
+                    resetForm();
+                  }}
+                  className="bg-zinc-800 border-zinc-700 hover:bg-zinc-700"
                 >
-                  <SelectTrigger className="shadecn-input">
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                    <SelectItem value="Electronics">Electronics</SelectItem>
-                    <SelectItem value="Clothing">Clothing</SelectItem>
-                    <SelectItem value="Books">Books</SelectItem>
-                    <SelectItem value="Home & Garden">Home & Garden</SelectItem>
-                    <SelectItem value="Sports">Sports</SelectItem>
-                  </SelectContent>
-                </Select>
-                {formErrors.category && (
-                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3" />
-                    {formErrors.category}
-                  </p>
-                )}
-              </div>
-              <div>
-                <Input
-                  label="Stock Quantity *"
-                  type="number"
-                  value={formData.stock}
-                  onChange={(e) =>
-                    setFormData({ ...formData, stock: e.target.value })
-                  }
-                  placeholder="0"
-                  required
-                  className="shadecn-input"
-                />
-                {formErrors.stock && (
-                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                    <AlertCircle className="h-3 w-3" />
-                    {formErrors.stock}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <Textarea
-                label="Description *"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                placeholder="Enter product description"
-                rows={3}
-                required
-                className="shadecn-input"
-              />
-              {formErrors.description && (
-                <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-                  <AlertCircle className="h-3 w-3" />
-                  {formErrors.description}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-white">
-                Product Images
-              </label>
-              <Input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="shadecn-input"
-                disabled={imageLoading}
-              />
-              {imageLoading && (
-                <div className="flex items-center gap-2 mt-2 text-sm text-zinc-400">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Uploading images...
-                </div>
-              )}
-              {imageUploadStatus && (
-                <p className="text-sm mt-2 text-zinc-300">
-                  {imageUploadStatus}
-                </p>
-              )}
-
-              {uploadedImages.length > 0 && (
-                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {uploadedImages.map((image, index) => (
-                    <div key={index} className="relative">
-                      <img
-                        src={image}
-                        alt={`Upload ${index + 1}`}
-                        className="w-full h-20 object-cover rounded-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(index)}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <DialogFooter className="pt-6 flex justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setShowEditModal(false);
-                  resetForm();
-                }}
-                className="bg-zinc-800 border-zinc-700 hover:bg-zinc-700"
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={actionLoading}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                {actionLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updating...
-                  </>
-                ) : (
-                  "Update Product"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={actionLoading}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {actionLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    "Update Product"
+                  )}
+                </Button>
+              </DialogFooter>
+            </form>
+          </div>
         </DialogContent>
       </Dialog>
 
       {/* Product Preview Modal */}
       <Dialog open={showPreviewModal} onOpenChange={setShowPreviewModal}>
-        <DialogContent className="bg-zinc-900 border-zinc-800 max-w-2xl">
+        <DialogContent className="bg-zinc-900 border-zinc-800 max-w-full sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle className="text-white font-['Montserrat']">
               Product Details
             </DialogTitle>
           </DialogHeader>
           {selectedProduct && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  {selectedProduct.images?.[0] ? (
-                    <img
-                      src={selectedProduct.images[0]}
-                      alt={selectedProduct.title}
-                      className="w-full h-48 object-cover rounded-lg"
-                    />
-                  ) : (
-                    <div className="w-full h-48 bg-zinc-800 rounded-lg flex items-center justify-center">
-                      <ImageIcon className="h-12 w-12 text-zinc-500" />
-                    </div>
-                  )}
+            <div className="space-y-4 p-4 sm:p-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-start">
+                <div className="w-full">
+                  <div className="w-full rounded-lg overflow-hidden bg-zinc-800">
+                    {selectedProduct.images?.[0] ? (
+                      <img
+                        src={selectedProduct.images[0]}
+                        alt={selectedProduct.title}
+                        className="w-full h-56 sm:h-64 object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-56 sm:h-64 flex items-center justify-center">
+                        <ImageIcon className="h-12 w-12 text-zinc-500" />
+                      </div>
+                    )}
+                  </div>
                   {selectedProduct.images?.length > 1 && (
-                    <div className="mt-4 grid grid-cols-4 gap-2">
-                      {selectedProduct.images.slice(1).map((image, index) => (
-                        <img
-                          key={index}
-                          src={image}
-                          alt={`${selectedProduct.title} ${index + 2}`}
-                          className="w-full h-16 object-cover rounded-lg"
-                        />
+                    <div className="mt-3 flex gap-2 overflow-x-auto">
+                      {selectedProduct.images.map((img, i) => (
+                        <div
+                          key={i}
+                          className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden border border-zinc-700"
+                        >
+                          <img
+                            src={img}
+                            alt={`${selectedProduct.title} ${i + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                       ))}
                     </div>
                   )}
                 </div>
+
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-xl font-bold text-white">
+                    <h3 className="text-lg sm:text-xl font-semibold text-white">
                       {selectedProduct.title}
                     </h3>
-                    <p className="text-2xl font-bold text-blue-400 mt-2">
-                      ${selectedProduct.price}
+                    <p className="text-2xl font-bold text-blue-400 mt-1">
+                      ₹{selectedProduct.price}
                     </p>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <Badge variant="secondary">
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Badge variant="secondary" className="text-sm">
                       {selectedProduct.category?.[0]?.name || "Uncategorized"}
                     </Badge>
                     {getStockBadge(selectedProduct.stock || 0)}
+                    <div className="text-sm text-zinc-400 ml-auto sm:ml-0">
+                      <div>ID</div>
+                      <div className="text-xs font-mono text-zinc-300">
+                        {selectedProduct._id}
+                      </div>
+                    </div>
                   </div>
+
                   <div>
-                    <h4 className="text-sm font-medium text-white mb-2">
+                    <h4 className="text-sm font-medium text-white mb-1">
                       Description
                     </h4>
                     <p className="text-zinc-300 text-sm">
                       {selectedProduct.description}
                     </p>
                   </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <h4 className="text-sm font-medium text-white">Stock</h4>
@@ -1501,9 +1541,9 @@ export default function Products() {
                       </p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-white">ID</h4>
-                      <p className="text-zinc-300 text-xs font-mono">
-                        {selectedProduct._id}
+                      <h4 className="text-sm font-medium text-white">Sold</h4>
+                      <p className="text-zinc-300">
+                        {selectedProduct.sold || 0}
                       </p>
                     </div>
                   </div>
@@ -1549,10 +1589,10 @@ export default function Products() {
             <AlertDialogCancel className="bg-zinc-800 border-zinc-700 hover:bg-zinc-700 text-white">
               Cancel
             </AlertDialogCancel>
-            <AlertDialogAction
+            <Button
               onClick={handleDeleteProduct}
               disabled={actionLoading}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-red-600 hover:bg-red-700 text-white inline-flex h-10 items-center justify-center rounded-md px-4 py-2 text-sm font-medium disabled:opacity-50"
             >
               {actionLoading ? (
                 <>
@@ -1562,7 +1602,7 @@ export default function Products() {
               ) : (
                 "Delete Product"
               )}
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
