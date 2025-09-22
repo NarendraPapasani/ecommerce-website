@@ -1,4 +1,3 @@
-````markdown
 # 🛒 BlinkShop - Advanced Ecommerce Platform
 
 <div align="center">
@@ -1219,4 +1218,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   <p>Made with ❤️ by <a href="https://github.com/NarendraPapasani">Narendra Papasani</a></p>
   <p>⭐ Star this repo if you found it helpful!</p>
 </div>
-````
