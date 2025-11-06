@@ -1,0 +1,44 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-zinc-800;
+  }
+
+  body {
+    @apply bg-zinc-950 text-slate-100 font-sans;
+    margin: 0;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-zinc-800 hover:bg-zinc-700 text-slate-200 px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+  }
+
+  .btn-danger {
+    @apply bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-zinc-900 border border-zinc-800 rounded-lg shadow-lg;
+  }
+
+  .form-input {
+    @apply bg-zinc-800 border-zinc-700 text-slate-100 rounded-lg px-3 py-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500;
+  }
+
+  .table-row {
+    @apply border-b border-zinc-800 hover:bg-zinc-900/50 transition-colors duration-200;
+  }
+}

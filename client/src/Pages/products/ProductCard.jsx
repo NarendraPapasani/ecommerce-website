@@ -11,7 +11,7 @@ import Cookies from "js-cookie";
 
 const ProductCard = ({ product, className }) => {
   const { toast, success, error } = useToast();
-  const { _id, title, price, images, rating, category } = product;
+  const { _id, title, price, images, rating, category, stock } = product;
   const navigate = useNavigate();
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
@@ -49,6 +49,8 @@ const ProductCard = ({ product, className }) => {
   };
 
   const handleProductClick = () => {
+    // If out of stock, don't navigate
+    if (typeof stock !== "undefined" && stock === 0) return;
     // Navigate to product details page
     // Use category slug if available, otherwise use category name or default
     const categorySlug =
@@ -214,12 +216,36 @@ const ProductCard = ({ product, className }) => {
           loading="lazy"
         />
 
+        {typeof stock !== "undefined" && stock === 0 && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center pointer-events-none">
+            <div className="text-center">
+              <div className="text-xl font-bold text-red-400 mb-2">
+                Out of stock
+              </div>
+              <div className="text-sm text-slate-300">
+                Currently unavailable
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Overlay on hover */}
         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
           <Button
             variant="secondary"
             size="sm"
-            className="bg-white/90 text-black hover:bg-white"
+            className="bg-white/90 text-black hover:bg-white pointer-events-auto"
+            onClick={(e) => {
+              e.stopPropagation();
+              const categorySlug =
+                category?.[0]?.slug ||
+                category?.[0]?.name ||
+                category?.slug ||
+                category?.name ||
+                "general";
+              navigate(`/product/${categorySlug}/${_id}`);
+              window.scrollTo(0, 0);
+            }}
           >
             <Eye className="h-4 w-4 mr-2" />
             Quick View
@@ -254,7 +280,9 @@ const ProductCard = ({ product, className }) => {
           <Button
             size="sm"
             onClick={handleAddToCart}
-            disabled={isAddingToCart}
+            disabled={
+              isAddingToCart || (typeof stock !== "undefined" && stock === 0)
+            }
             className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:scale-100"
           >
             <ShoppingCart className="h-4 w-4 mr-1" />

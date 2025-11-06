@@ -249,6 +249,10 @@ const Login = () => {
         const errorMessage =
           error.response.data?.msg || "Google authentication failed";
         toast.error(errorMessage);
+      } else if (error.response?.status === 403) {
+        // Account deactivated
+        const errorMessage = error.response.data?.msg || "Account deactivated";
+        toast.error(errorMessage);
       } else {
         toast.error("Google sign-in failed. Please try again.");
       }

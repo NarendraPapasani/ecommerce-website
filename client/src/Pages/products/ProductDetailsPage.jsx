@@ -65,6 +65,7 @@ const ProductDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isWishlistLoading, setIsWishlistLoading] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [newReview, setNewReview] = useState({
@@ -484,15 +485,105 @@ const ProductDetailsPage = () => {
     }
   };
 
-  const toggleWishlist = () => {
-    setIsWishlisted(!isWishlisted);
-    toast({
-      title: "Success",
-      description: isWishlisted ? "Removed from wishlist" : "Added to wishlist",
-      variant: "success",
-      className: "bg-green-600 border-green-600 text-white",
-    });
+  // Check, add or remove product from wishlist via API
+  const toggleWishlist = async () => {
+    const productId = productDetails._id || id;
+
+    if (!jwt) {
+      toast({
+        title: "Authentication Required",
+        description: "Please login to manage wishlist",
+        variant: "destructive",
+        className: "bg-red-600 border-red-600 text-white",
+      });
+      navigate("/login");
+      return;
+    }
+
+    setIsWishlistLoading(true);
+    try {
+      if (!isWishlisted) {
+        // Add to wishlist
+        await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/api/wishlist/add`,
+          { productId },
+          {
+            headers: { Authorization: `Bearer ${jwt}` },
+            withCredentials: true,
+          }
+        );
+
+        setIsWishlisted(true);
+        toast({
+          title: "Success",
+          description: "Added to wishlist",
+          variant: "success",
+          className: "bg-green-600 border-green-600 text-white",
+        });
+      } else {
+        // Remove from wishlist
+        await axios.delete(
+          `${
+            import.meta.env.VITE_API_BASE_URL
+          }/api/wishlist/remove/${productId}`,
+          {
+            headers: { Authorization: `Bearer ${jwt}` },
+            withCredentials: true,
+          }
+        );
+
+        setIsWishlisted(false);
+        toast({
+          title: "Success",
+          description: "Removed from wishlist",
+          variant: "success",
+          className: "bg-green-600 border-green-600 text-white",
+        });
+      }
+    } catch (error) {
+      const errorMsg =
+        error.response?.data?.message || "Wishlist update failed";
+      toast({
+        title: "Error",
+        description: errorMsg,
+        variant: "destructive",
+        className: "bg-red-600 border-red-600 text-white",
+      });
+      console.error("Wishlist error:", error);
+    } finally {
+      setIsWishlistLoading(false);
+    }
   };
+
+  // Check whether product is in wishlist when product loads
+  useEffect(() => {
+    const checkWishlist = async () => {
+      const productId = productDetails._id || id;
+      if (!productId) return;
+
+      if (!jwt) {
+        setIsWishlisted(false);
+        return;
+      }
+
+      try {
+        const res = await axios.get(
+          `${
+            import.meta.env.VITE_API_BASE_URL
+          }/api/wishlist/check/${productId}`,
+          {
+            headers: { Authorization: `Bearer ${jwt}` },
+            withCredentials: true,
+          }
+        );
+        setIsWishlisted(Boolean(res.data.inWishlist));
+      } catch (error) {
+        console.error("Error checking wishlist status:", error);
+      }
+    };
+
+    checkWishlist();
+  }, [productDetails._id, id, jwt]);
 
   const handleShare = async () => {
     const shareData = {
@@ -754,9 +845,21 @@ const ProductDetailsPage = () => {
                     {productDetails.category[0].name}
                   </Badge>
                 )}
-                <div className="flex items-center gap-2 text-emerald-400">
-                  <CheckCircle className="h-4 w-4" />
-                  <span className="text-sm font-medium">In Stock</span>
+                <div className="flex items-center gap-2">
+                  {productDetails.stock > 0 ? (
+                    <>
+                      <CheckCircle className="h-4 w-4 text-emerald-400" />
+                      <span className="text-sm font-medium text-emerald-400">
+                        In Stock
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Badge className="bg-red-600 text-white">
+                        Out of Stock
+                      </Badge>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -811,7 +914,7 @@ const ProductDetailsPage = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleQuantityChange(-1)}
-                          disabled={quantity <= 1}
+                          disabled={quantity <= 1 || productDetails.stock === 0}
                           className="h-10 w-10 lg:h-12 lg:w-12 rounded-l-xl hover:bg-slate-600 disabled:opacity-50"
                         >
                           <Minus className="h-4 w-4" />
@@ -823,7 +926,11 @@ const ProductDetailsPage = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleQuantityChange(1)}
-                          className="h-10 w-10 lg:h-12 lg:w-12 rounded-r-xl hover:bg-slate-600"
+                          disabled={
+                            productDetails.stock === 0 ||
+                            quantity >= productDetails.stock
+                          }
+                          className="h-10 w-10 lg:h-12 lg:w-12 rounded-r-xl hover:bg-slate-600 disabled:opacity-50"
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
@@ -842,7 +949,8 @@ const ProductDetailsPage = () => {
                     <Button
                       onClick={clickBuyNow}
                       size="lg"
-                      className="w-full h-12 lg:h-14 text-base lg:text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/25"
+                      disabled={productDetails.stock === 0}
+                      className="w-full h-12 lg:h-14 text-base lg:text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/25 disabled:opacity-50"
                     >
                       <ShoppingCart className="h-4 w-4 lg:h-5 lg:w-5 mr-2 lg:mr-3" />
                       Buy Now - {formatPrice(productDetails.price * quantity)}
@@ -853,7 +961,8 @@ const ProductDetailsPage = () => {
                         onClick={addToCart}
                         variant="outline"
                         size="lg"
-                        className="h-10 lg:h-12 border-slate-600 text-white hover:bg-slate-700 hover:border-slate-500 rounded-xl transition-all duration-300"
+                        disabled={productDetails.stock === 0}
+                        className="h-10 lg:h-12 border-slate-600 text-white hover:bg-slate-700 hover:border-slate-500 rounded-xl transition-all duration-300 disabled:opacity-50"
                       >
                         <ShoppingCart className="h-4 w-4 mr-1 lg:mr-2" />
                         <span className="hidden sm:inline">Add to Cart</span>

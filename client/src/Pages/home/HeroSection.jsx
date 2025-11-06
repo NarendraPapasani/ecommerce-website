@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 import { ShoppingBag, Zap, Heart, Star, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +7,12 @@ import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const jwt = Cookies.get("jwt1");
+    setIsLoggedIn(Boolean(jwt));
+  }, []);
 
   const quotes = [
     {
@@ -52,7 +59,9 @@ const HeroSection = () => {
               <div className="flex items-center space-x-2 text-blue-400 font-semibold">
                 <ShoppingBag className="h-5 w-5" />
                 <span className="font-['Montserrat']">
-                  Welcome to BlinkShop
+                  {isLoggedIn
+                    ? "Welcome back to BlinkShop"
+                    : "Welcome to BlinkShop"}
                 </span>
               </div>
 
@@ -72,23 +81,47 @@ const HeroSection = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button
-                size="lg"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-['Montserrat'] text-lg px-8"
-                onClick={() => navigate("/products/all")}
-              >
-                Shop Now
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+              {isLoggedIn ? (
+                <>
+                  <Button
+                    size="lg"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-['Montserrat'] text-lg px-8"
+                    onClick={() => navigate("/products/all")}
+                  >
+                    Continue Shopping
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
 
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-zinc-700 text-white hover:bg-zinc-800 font-['Montserrat'] text-lg px-8"
-                onClick={() => navigate("/products/all")}
-              >
-                Browse Categories
-              </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-zinc-700 text-white hover:bg-zinc-800 font-['Montserrat'] text-lg px-8"
+                    onClick={() => navigate("/profile")}
+                  >
+                    My Orders
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    size="lg"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-['Montserrat'] text-lg px-8"
+                    onClick={() => navigate("/products/all")}
+                  >
+                    Shop Now
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-zinc-700 text-white hover:bg-zinc-800 font-['Montserrat'] text-lg px-8"
+                    onClick={() => navigate("/products/all")}
+                  >
+                    Browse Categories
+                  </Button>
+                </>
+              )}
             </div>
 
             {/* Features */}

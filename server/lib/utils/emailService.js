@@ -410,6 +410,136 @@ const sendPasswordResetEmail = async (userEmail, resetToken) => {
   }
 };
 
+// Send order status update email
+const sendOrderStatusUpdateEmail = async (userEmail, orderDetails) => {
+  try {
+    const transporter = createTransporter();
+
+    const {
+      orderId,
+      newStatus,
+      oldStatus,
+      trackingNumber,
+      adminNotes,
+      cartItems,
+      totalPrice,
+      refundAmount,
+      refundReason,
+    } = orderDetails;
+
+    const orderItemsHTML = cartItems
+      .map(
+        (item) => `
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">
+            <img src="${item.image}" alt="${
+          item.title
+        }" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">
+            <strong>${item.title}</strong>
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">
+            ${item.quantity}
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
+            ₹${(parseFloat(item.price) * item.quantity).toFixed(2)}
+          </td>
+        </tr>
+      `
+      )
+      .join("");
+
+    const emailHTML = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Order Status Update - BlinkShop</title>
+          ${emailStyles}
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 style="margin: 0; font-size: 28px;">BlinkShop</h1>
+              <h2 style="margin: 10px 0;">Order Status Update</h2>
+              <p>Your order status has been updated</p>
+            </div>
+            
+            <div class="content">
+              <h2>Dear Customer,</h2>
+              <p>Your order status has been updated from <strong>${oldStatus}</strong> to <strong>${newStatus}</strong>.</p>
+              
+              <div class="order-summary">
+                <h3>Order Details</h3>
+                <p><strong>Order ID:</strong> ${orderId}</p>
+                ${
+                  trackingNumber
+                    ? `<p><strong>Tracking Number:</strong> ${trackingNumber}</p>`
+                    : ""
+                }
+                ${
+                  adminNotes
+                    ? `<p><strong>Admin Notes:</strong> ${adminNotes}</p>`
+                    : ""
+                }
+                ${
+                  refundAmount
+                    ? `<p><strong>Refund Amount:</strong> ₹${refundAmount}</p>`
+                    : ""
+                }
+                ${
+                  refundReason
+                    ? `<p><strong>Refund Reason:</strong> ${refundReason}</p>`
+                    : ""
+                }
+                
+                <h4>Items Ordered:</h4>
+                <table class="order-items">
+                  <thead>
+                    <tr style="background-color: #f3f4f6;">
+                      <th style="padding: 10px; text-align: left;">Image</th>
+                      <th style="padding: 10px; text-align: left;">Product</th>
+                      <th style="padding: 10px; text-align: center;">Quantity</th>
+                      <th style="padding: 10px; text-align: right;">Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${orderItemsHTML}
+                  </tbody>
+                </table>
+                
+                <div style="margin-top: 20px; text-align: right;">
+                  <p class="total">Total Amount: ₹${totalPrice.toFixed(2)}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="footer">
+              <p>If you have any questions, please contact our customer support.</p>
+              <p>&copy; 2025 BlinkShop. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: userEmail,
+      subject: `Order Status Update - Order #${orderId}`,
+      html: emailHTML,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Order status update email sent to ${userEmail}`);
+    return true;
+  } catch (error) {
+    console.error("Error sending order status update email:", error);
+    return false;
+  }
+};
+
 module.exports = {
   generateVerificationCode,
   sendEmailVerification,
@@ -417,4 +547,5 @@ module.exports = {
   sendOrderShippedEmail,
   sendOrderDeliveredEmail,
   sendPasswordResetEmail,
+  sendOrderStatusUpdateEmail,
 };

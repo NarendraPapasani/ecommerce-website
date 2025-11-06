@@ -59,6 +59,10 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
     },
+    orderCount: {
+      type: Number,
+      default: 0,
+    },
     agreeMarketing: {
       type: Boolean,
       default: false,

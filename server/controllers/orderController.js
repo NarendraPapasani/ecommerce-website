@@ -1,5 +1,6 @@
 const Order = require("../models/orderModel");
 const Product = require("../models/productModel");
+const User = require("../models/userModel");
 const Address = require("../models/addressModel");
 const Payment = require("../models/paymentModel");
 const { sendOrderConfirmationEmail } = require("../lib/utils/emailService");
@@ -17,111 +18,133 @@ const addOrder = async (req, res) => {
     } = req.body;
     const { email, _id: userId } = req.user;
 
-    // Validate product IDs and add required fields
-    for (const item of cartItems) {
-      const product = await Product.findById(item.productId);
-      if (!product) {
-        return res.status(400).json({
-          status: "error",
-          message: `Product with ID ${item.productId} not found`,
+    // Start a mongoose session to perform stock decrements and order creation atomically
+    const session = await mongoose.startSession();
+    let savedOrderDetails = null;
+    let savedPayment = null;
+
+    try {
+      await session.withTransaction(async () => {
+        // Validate address ID inside transaction (reads are fine)
+        if (!mongoose.Types.ObjectId.isValid(addressId)) {
+          throw new Error("Invalid address ID format");
+        }
+
+        const address = await Address.findOne({
+          "addresses._id": addressId,
+        }).session(session);
+        if (!address) {
+          throw new Error(`Address with ID ${addressId} not found`);
+        }
+
+        // Validate product IDs, enrich cart items and ensure sufficient stock
+        for (const item of cartItems) {
+          const product = await Product.findById(item.productId).session(
+            session
+          );
+          if (!product) {
+            throw new Error(`Product with ID ${item.productId} not found`);
+          }
+
+          const qty = item.quantity || 1;
+          if (product.stock < qty) {
+            throw new Error(
+              `Insufficient stock for product ${product.title}. Available ${product.stock}, required ${qty}`
+            );
+          }
+
+          // Enrich item fields from product
+          item.title = product.title;
+          item.price = product.price;
+          item.image =
+            product.images && product.images.length > 0
+              ? product.images[0]
+              : "";
+          item.slug = product.slug;
+          item.description = product.description;
+          item.category = product.category;
+
+          // Decrement stock
+          product.stock = product.stock - qty;
+          await product.save({ session });
+        }
+
+        // Find or create order document for this user
+        let orderDetails = await Order.findOne({ email }).session(session);
+        if (!orderDetails) {
+          orderDetails = new Order({ email, orders: [] });
+        }
+
+        // Add the new order
+        orderDetails.orders.push({
+          cartItems: cartItems,
+          addressId: addressId,
+          totalPrice: totalPrice,
+          paymentMethod: paymentMethod,
         });
-      }
-      // Add required fields from the product
-      item.title = product.title;
-      item.price = product.price;
-      item.image =
-        product.images && product.images.length > 0 ? product.images[0] : "";
-      item.slug = product.slug;
-      item.description = product.description;
-      item.category = product.category;
-    }
 
-    // Validate address ID
-    if (!mongoose.Types.ObjectId.isValid(addressId)) {
-      return res.status(400).json({
-        status: "error",
-        message: `Invalid address ID format`,
+        await orderDetails.save({ session });
+
+        // Get the newly created order ID
+        const newOrder = orderDetails.orders[orderDetails.orders.length - 1];
+        const orderId = newOrder._id;
+
+        // Create payment document
+        const paymentData = {
+          userId: userId,
+          orderId: orderId,
+          paymentMethod: paymentMethod,
+          amount: totalPrice,
+          currency: "INR",
+          status: paymentStatus === "completed" ? "completed" : "pending",
+        };
+
+        if (paymentMethod === "cod") {
+          paymentData.cod = { confirmed: false, deliveryStatus: "pending" };
+          paymentData.status = "pending";
+        } else if (paymentMethod === "razorpay" && paymentDetails) {
+          paymentData.razorpay = {
+            paymentId: paymentDetails.razorpay_payment_id || null,
+            orderId: paymentDetails.razorpay_order_id || null,
+            signature: paymentDetails.razorpay_signature || null,
+            gatewayResponse: paymentDetails,
+          };
+          paymentData.status = paymentStatus;
+        }
+
+        const payment = new Payment(paymentData);
+        await payment.save({ session });
+
+        // Update user's order count
+        const orderedUser = await User.findById(userId).session(session);
+        if (!orderedUser) {
+          throw new Error("User not found");
+        }
+
+        orderedUser.orderCount = (orderedUser.orderCount || 0) + 1;
+        await orderedUser.save({ session });
+
+        // Persist references to return after commit
+        savedOrderDetails = orderDetails;
+        savedPayment = payment;
       });
+    } finally {
+      session.endSession();
     }
 
-    const address = await Address.findOne({
-      "addresses._id": addressId,
-    });
-    if (!address) {
-      return res.status(400).json({
-        status: "error",
-        message: `Address with ID ${addressId} not found`,
-      });
-    }
-
-    // Find or create order document
-    let orderDetails = await Order.findOne({ email });
-    if (!orderDetails) {
-      orderDetails = new Order({
-        email,
-        orders: [],
-      });
-    }
-
-    // Add the new order
-    orderDetails.orders.push({
-      cartItems: cartItems,
-      addressId: addressId,
-      totalPrice: totalPrice,
-      paymentMethod: paymentMethod,
-    });
-
-    await orderDetails.save();
-
-    // Get the newly created order ID
-    const newOrder = orderDetails.orders[orderDetails.orders.length - 1];
-    const orderId = newOrder._id;
-
-    // Create payment document
-    const paymentData = {
-      userId: userId,
-      orderId: orderId,
-      paymentMethod: paymentMethod,
-      amount: totalPrice,
-      currency: "INR",
-      status: paymentStatus === "completed" ? "completed" : "pending",
-    };
-
-    // Add payment method specific details
-    if (paymentMethod === "cod") {
-      paymentData.cod = {
-        confirmed: false,
-        deliveryStatus: "pending",
-      };
-      paymentData.status = "pending"; // COD is always pending until delivery
-    } else if (paymentMethod === "razorpay" && paymentDetails) {
-      paymentData.razorpay = {
-        paymentId: paymentDetails.razorpay_payment_id || null,
-        orderId: paymentDetails.razorpay_order_id || null,
-        signature: paymentDetails.razorpay_signature || null,
-        gatewayResponse: paymentDetails,
-      };
-      paymentData.status = paymentStatus; // Use the provided status for online payments
-    }
-
-    console.log("Payment Data:", paymentData);
-
-    // Create the payment document
-    const payment = new Payment(paymentData);
-    await payment.save();
-
-    // Send response first to confirm order success
+    // If everything committed successfully, respond
     res.status(200).json({
       status: "success",
       message: "Order placed successfully",
-      order: orderDetails,
-      payment: payment,
+      order: savedOrderDetails,
+      payment: savedPayment,
     });
 
-    // Send order confirmation email after successful order placement
-    // This runs asynchronously and doesn't affect the API response
+    // Send order confirmation email asynchronously
     setImmediate(async () => {
       try {
+        const orderId =
+          savedOrderDetails.orders[savedOrderDetails.orders.length - 1]._id;
         await sendOrderConfirmationEmail(email, {
           cartItems: cartItems,
           totalPrice: totalPrice,
@@ -130,7 +153,6 @@ const addOrder = async (req, res) => {
         });
       } catch (emailError) {
         console.error("Failed to send order confirmation email:", emailError);
-        // Email failure doesn't affect the order - it's already placed successfully
       }
     });
   } catch (error) {
