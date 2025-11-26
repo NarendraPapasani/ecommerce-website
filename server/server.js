@@ -52,6 +52,11 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+app.get("/ping", (req, res) => {
+  console.log("Keep-Alive ping received");
+  res.status(200).send("pong");
+});
+
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/products", require("./routes/productRoute"));
 app.use("/api/cart", authenticateController, require("./routes/cartRoute"));
