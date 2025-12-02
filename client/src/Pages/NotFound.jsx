@@ -28,7 +28,7 @@ const NotFound = () => {
                   <AlertTriangle className="h-10 w-10 text-red-400" />
                 </div>
                 <div className="space-y-2">
-                  <h1 className="text-xl sm:text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                  <h1 className="text-xl sm:text-4xl font-bold bg-clip-text text-green-600">
                     404
                   </h1>
                   <h2 className="text-xl sm:text-3xl font-bold text-white">
@@ -41,7 +41,7 @@ const NotFound = () => {
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <Button
                   onClick={() => navigate("/")}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 w-full sm:w-auto"
+                  className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 w-full sm:w-auto"
                 >
                   <Home className="h-4 w-4 mr-2" />
                   Back to Home
@@ -88,8 +88,8 @@ const NotFound = () => {
               {/* Brand */}
               <div className="pt-4">
                 <div className="flex items-center justify-center space-x-2">
-                  <ShoppingBag className="h-6 w-6 text-blue-500" />
-                  <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                  <ShoppingBag className="h-6 w-6 text-green-600" />
+                  <span className="text-2xl font-bold bg-clip-text text-green-600">
                     BlinkShop
                   </span>
                 </div>

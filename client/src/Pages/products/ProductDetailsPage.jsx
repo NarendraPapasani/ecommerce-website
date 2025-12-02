@@ -823,7 +823,7 @@ const ProductDetailsPage = () => {
                         {/* Write Review Button */}
                         <Button
                           onClick={() => setShowReviewModal(true)}
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                          className="w-full bg-green-600 hover:bg-green-700 text-white"
                         >
                           <MessageCircle className="h-4 w-4 mr-2" />
                           Write a Review
@@ -871,11 +871,11 @@ const ProductDetailsPage = () => {
               </div>
 
               {/* Price section with enhanced styling */}
-              <Card className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 border-blue-500/30 backdrop-blur-sm">
+              <Card className="bg-gradient-to-r from-blue-600/10 to-green-600/10 border-blue-500/30 backdrop-blur-sm">
                 <CardContent className="p-4 lg:p-6">
                   <div className="space-y-3 lg:space-y-4">
                     <div className="flex items-baseline gap-2 lg:gap-4 flex-wrap">
-                      <div className="text-2xl lg:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                      <div className="text-2xl lg:text-4xl font-bold bg-clip-text text-green-600">
                         {formatPrice(productDetails.price)}
                       </div>
                       <div className="text-slate-400 line-through text-base lg:text-lg">
@@ -950,7 +950,7 @@ const ProductDetailsPage = () => {
                       onClick={clickBuyNow}
                       size="lg"
                       disabled={productDetails.stock === 0}
-                      className="w-full h-12 lg:h-14 text-base lg:text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/25 disabled:opacity-50"
+                      className="w-full h-12 lg:h-14 text-base lg:text-lg font-semibold bg-green-600 hover:bg-green-700 text-white border-0 rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-blue-500/25 disabled:opacity-50"
                     >
                       <ShoppingCart className="h-4 w-4 lg:h-5 lg:w-5 mr-2 lg:mr-3" />
                       Buy Now - {formatPrice(productDetails.price * quantity)}
@@ -1272,7 +1272,7 @@ const ProductDetailsPage = () => {
                         Customer Reviews
                       </CardTitle>
                       <Button
-                        className="bg-blue-600 text-white border-0 hover:bg-blue-700 text-xs lg:text-sm px-3 lg:px-4"
+                        className="bg-green-600 text-white border-0 hover:bg-green-700 text-xs lg:text-sm px-3 lg:px-4"
                         onClick={() => setShowReviewModal(true)}
                       >
                         <MessageCircle className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
@@ -1321,7 +1321,7 @@ const ProductDetailsPage = () => {
                           </p>
                           <Button
                             onClick={() => setShowReviewModal(true)}
-                            className="bg-blue-600 hover:bg-blue-700"
+                            className="bg-green-600 hover:bg-green-700"
                           >
                             Write First Review
                           </Button>
@@ -1669,7 +1669,7 @@ const ProductDetailsPage = () => {
                 <Button
                   onClick={submitReview}
                   disabled={!newReview.comment.trim() || submittingReview}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                 >
                   {submittingReview ? (
                     <>

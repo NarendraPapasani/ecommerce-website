@@ -283,7 +283,7 @@ const ProductCard = ({ product, className }) => {
             disabled={
               isAddingToCart || (typeof stock !== "undefined" && stock === 0)
             }
-            className="bg-blue-600 hover:bg-blue-700 text-white transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:scale-100"
+            className="bg-green-600 hover:bg-green-700 text-white transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:scale-100"
           >
             <ShoppingCart className="h-4 w-4 mr-1" />
             {isAddingToCart ? "Adding..." : "Add"}

@@ -542,7 +542,7 @@ const OldProfile = () => {
                     }
                     alt="Profile"
                   />
-                  <AvatarFallback className="bg-gradient-to-br from-blue-600 to-purple-600 text-white text-2xl">
+                  <AvatarFallback className="text-green-600 text-2xl">
                     {getInitials(user?.firstName, user?.lastName)}
                   </AvatarFallback>
                 </Avatar>
@@ -551,7 +551,7 @@ const OldProfile = () => {
               {/* User Info */}
               <div className="flex-1 text-center lg:text-left">
                 <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4">
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                  <h1 className="text-4xl font-bold bg-clip-text text-green-600">
                     {user?.firstName} {user?.lastName}
                   </h1>
                   <Badge
@@ -620,7 +620,7 @@ const OldProfile = () => {
           <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 bg-slate-800/50 border-slate-700 mb-8 h-auto p-1 gap-1">
             <TabsTrigger
               value="profile"
-              className="data-[state=active]:bg-blue-600 text-xs lg:text-sm py-2 lg:py-3 px-2 lg:px-4 h-auto"
+              className="data-[state=active]:bg-green-600 text-xs lg:text-sm py-2 lg:py-3 px-2 lg:px-4 h-auto"
             >
               <User className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
               <span className="hidden sm:inline">Profile</span>
@@ -636,7 +636,7 @@ const OldProfile = () => {
             </TabsTrigger>
             <TabsTrigger
               value="preferences"
-              className="data-[state=active]:bg-purple-600 text-xs lg:text-sm py-2 lg:py-3 px-2 lg:px-4 h-auto"
+              className="data-[state=active]:bg-green-600 text-xs lg:text-sm py-2 lg:py-3 px-2 lg:px-4 h-auto"
             >
               <Settings className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
               <span className="hidden sm:inline">Preferences</span>

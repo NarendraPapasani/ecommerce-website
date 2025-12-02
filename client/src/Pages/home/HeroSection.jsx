@@ -85,7 +85,7 @@ const HeroSection = () => {
                 <>
                   <Button
                     size="lg"
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-['Montserrat'] text-lg px-8"
+                    className="bg-green-600 hover:bg-green-700 text-white font-['Montserrat'] text-lg px-8"
                     onClick={() => navigate("/products/all")}
                   >
                     Continue Shopping
@@ -96,7 +96,7 @@ const HeroSection = () => {
                     variant="outline"
                     size="lg"
                     className="border-zinc-700 text-white hover:bg-zinc-800 font-['Montserrat'] text-lg px-8"
-                    onClick={() => navigate("/profile")}
+                    onClick={() => navigate("/orders")}
                   >
                     My Orders
                   </Button>
