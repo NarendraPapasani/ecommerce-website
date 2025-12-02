@@ -786,11 +786,10 @@ const Login = () => {
           <div className="mb-12">
             <div className="flex items-center justify-start mb-6">
               <div className="relative">
-                <ShoppingBag className="w-20 h-20 text-blue-500 animate-pulse" />
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-ping"></div>
+                <ShoppingBag className="w-20 h-20 text-green-600" />
               </div>
               <div className="ml-4">
-                <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+                <h1 className="text-6xl font-bold text-green-600 bg-clip-text">
                   BlinkShop
                 </h1>
                 <p className="text-slate-400 text-xl font-medium">
@@ -835,11 +834,11 @@ const Login = () => {
         <div className="flex lg:hidden justify-center items-center pt-8 pb-4">
           <div className="flex items-center">
             <div className="relative">
-              <ShoppingBag className="w-12 h-12 text-blue-500" />
+              <ShoppingBag className="w-12 h-12 text-green-600" />
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full animate-ping"></div>
             </div>
             <div className="ml-3">
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-green-600 bg-clip-text">
                 BlinkShop
               </h1>
             </div>
@@ -850,7 +849,7 @@ const Login = () => {
         <div className="w-full lg:w-1/2 flex items-center justify-center p-2 lg:p-10 lg:min-h-screen">
           <Card className="w-full lg:min-w-[500px] max-w-xl bg-slate-900/80 backdrop-blur-xl border-slate-700/50 shadow-2xl">
             <CardHeader className="text-center space-y-4">
-              <div className="mx-auto w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+              <div className="mx-auto w-12 h-12 bg-green-800 rounded-full flex items-center justify-center">
                 <User className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -868,13 +867,13 @@ const Login = () => {
                 <TabsList className="grid w-full grid-cols-2 bg-slate-800/50 border border-slate-700/50 sticky top-0 z-10">
                   <TabsTrigger
                     value="login"
-                    className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                    className="data-[state=active]:bg-green-800 data-[state=active]:text-white"
                   >
                     Sign In
                   </TabsTrigger>
                   <TabsTrigger
                     value="signup"
-                    className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                    className="data-[state=active]:bg-green-800 data-[state=active]:text-white"
                   >
                     Sign Up
                   </TabsTrigger>
@@ -996,7 +995,7 @@ const Login = () => {
 
                     <Button
                       type="submit"
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold h-11"
+                      className="w-full bg-green-700 hover:bg-green-800 text-white font-semibold h-11"
                       disabled={loginLoading}
                     >
                       {loginLoading ? (
@@ -1653,7 +1652,7 @@ const Login = () => {
 
                     <Button
                       type="submit"
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold h-11"
+                      className="w-full bg-green-800 hover:bg-green-900 text-white font-semibold h-11"
                       disabled={signupLoading || !emailVerified}
                     >
                       {signupLoading ? (

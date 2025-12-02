@@ -116,8 +116,8 @@ const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <ShoppingBag className="h-8 w-8 text-blue-500" />
-            <h1 className="text-3xl lg:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
+            <ShoppingBag className="h-8 w-8 text-green-500" />
+            <h1 className="text-3xl lg:text-3xl font-bold text-green-600 bg-clip-text">
               BlinkShop
             </h1>
           </Link>

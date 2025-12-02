@@ -56,7 +56,7 @@ const HeroSection = () => {
           <div className="space-y-8">
             {/* Main Heading */}
             <div className="space-y-4">
-              <div className="flex items-center space-x-2 text-blue-400 font-semibold">
+              <div className="flex items-center space-x-2 text-green-600 font-semibold">
                 <ShoppingBag className="h-5 w-5" />
                 <span className="font-['Montserrat']">
                   {isLoggedIn
@@ -65,10 +65,10 @@ const HeroSection = () => {
                 </span>
               </div>
 
-              <h1 className="text-4xl md:text-6xl text-left font-bold text-white leading-tight font-['Montserrat']">
+              <h1 className="text-4xl md:text-6xl text-left font-bold text-green-700 leading-tight font-['Montserrat']">
                 Shop Smart,
                 <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
+                <span className="text-transparent bg-clip-text text-green-700">
                   Shop Fast
                 </span>
               </h1>
@@ -105,7 +105,7 @@ const HeroSection = () => {
                 <>
                   <Button
                     size="lg"
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-['Montserrat'] text-lg px-8"
+                    className="bg-green-700 hover:bg-green-800 text-white font-['Montserrat'] text-lg px-8"
                     onClick={() => navigate("/products/all")}
                   >
                     Shop Now
